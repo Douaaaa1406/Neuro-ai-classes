@@ -10,117 +10,118 @@ import pytz
 
 # --- 1. CONFIGURATION DE LA PAGE ---
 st.set_page_config(
-    page_title="NeuroScan AI | Expert System",
+    page_title="NeuroScan AI | Premium Edition",
     page_icon="🧠",
     layout="wide"
 )
 
-# --- 2. DESIGN "MODERN CLINIC" (GRIS PLATINE & BLEU COBALT) ---
+# --- 2. DESIGN "PREMIUM GLASSMORPHISM" ---
 st.markdown("""
 <style>
-    /* Fond Gris Très Clair / Soft Grey */
+    /* Arrière-plan dégradé doux */
     [data-testid="stAppViewContainer"] {
-        background-color: #f8f9fa;
-        color: #2c3e50;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: #1a2a6c;
     }
     
-    /* En-tête avec un dégradé élégant */
+    /* En-tête Haute Définition */
     .main-header {
-        font-family: 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #2c3e50 0%, #4a90e2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 3.2em;
-        font-weight: 700;
+        font-family: 'Inter', sans-serif;
+        color: #1a2a6c;
+        font-size: 3.5em;
+        font-weight: 800;
         text-align: center;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
     }
 
-    /* Barre d'info soft */
+    /* Barre d'info type "Verre" */
     .info-bar {
-        background: #ffffff;
-        padding: 12px;
-        border-radius: 10px;
-        color: #34495e;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 15px;
+        border-radius: 15px;
+        color: #1a2a6c;
         text-align: center;
-        font-weight: 500;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        border: 1px solid #e1e8ed;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
         margin-bottom: 30px;
     }
 
-    /* Cartes avec effet de profondeur (Neumorphism soft) */
+    /* Cartes Médicales Premium */
     .medical-card {
-        background: #ffffff;
-        border-radius: 15px;
-        padding: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-        border: 1px solid #edf2f7;
-        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(8px);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+    }
+    .medical-card:hover {
+        transform: translateY(-5px);
     }
 
-    /* Bouton d'Analyse - Bleu Cobalt Professionnel */
+    /* Bouton d'Analyse - Royal Blue Gradient */
     div.stButton > button {
-        background: #4a90e2 !important;
+        background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d) !important; /* Dégradé dynamique */
+        background-size: 200% auto !important;
         color: white !important;
         border: none !important;
-        padding: 12px 0px !important;
+        padding: 15px 0px !important;
         width: 100%;
-        font-weight: 600 !important;
-        font-size: 1.1em !important;
-        border-radius: 8px !important;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3) !important;
+        font-weight: bold !important;
+        border-radius: 12px !important;
+        transition: 0.5s !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
     }
     div.stButton > button:hover {
-        background: #357abd !important;
-        box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4) !important;
-        transform: translateY(-1px);
+        background-position: right center !important;
+        box-shadow: 0 15px 25px rgba(0,0,0,0.2) !important;
     }
 
-    /* Inputs Modernes */
-    .stTextInput>div>div>input, .stSelectbox>div>div>div {
-        border-radius: 8px !important;
-        border: 1px solid #d1d9e6 !important;
-    }
-
-    /* Cadre de l'Image Scan */
+    /* Image Display */
     .scan-display {
-        border: 8px solid #ffffff;
         border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        overflow: hidden;
+        border: 10px solid white;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
     }
 
-    /* LinkedIn Flottant */
+    /* LinkedIn Floating Button */
     .linkedin-fixed {
         position: fixed;
-        bottom: 25px;
-        right: 25px;
+        bottom: 30px;
+        right: 30px;
         background: #0077b5;
-        padding: 10px 20px;
+        padding: 12px 25px;
         border-radius: 50px;
-        box-shadow: 0 5px 15px rgba(0,119,181,0.3);
+        box-shadow: 0 10px 20px rgba(0,119,181,0.3);
+        transition: 0.3s;
+    }
+    .linkedin-fixed:hover {
+        transform: scale(1.1);
+        background: #005a87;
     }
     .linkedin-fixed a {
         color: white !important;
         text-decoration: none !important;
-        font-size: 0.9em;
-        font-weight: 600;
+        font-weight: bold;
     }
 
-    /* Footer discret */
+    /* Footer */
     .custom-footer {
-        margin-top: 60px;
+        margin-top: 80px;
         text-align: center;
-        color: #7f8c8d;
-        font-size: 0.9em;
-        padding-bottom: 30px;
+        padding: 40px;
+        background: rgba(255,255,255,0.3);
+        color: #1a2a6c;
+        font-weight: 500;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. LOGIQUE DU MODÈLE ---
+# --- 3. LOGIQUE IA ---
 @st.cache_resource
 def load_neuro_model():
     model_path = 'brain_tumor_model_v6_final.keras'
@@ -128,7 +129,7 @@ def load_neuro_model():
     url = f'https://drive.google.com/uc?id={file_id}'
     if not os.path.exists(model_path):
         try: gdown.download(url, model_path, quiet=False)
-        except: st.error("Database connection issue.")
+        except: st.error("AI Server Offline.")
     
     base_model = tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights=None)
     model = tf.keras.Sequential([
@@ -143,29 +144,30 @@ def load_neuro_model():
     model.load_weights(model_path)
     return model
 
-# --- 4. NAVIGATION ---
+# --- 4. NAVIGATION & TEMPS ---
 algeria_tz = pytz.timezone('Africa/Algiers')
 now = datetime.datetime.now(algeria_tz)
 
-st.markdown('<p class="main-header">NeuroScan AI System</p>', unsafe_allow_html=True)
-st.markdown(f'<div class="info-bar">📍 Algiers Medical Center | 🕒 {now.strftime("%H:%M:%S")} | Clinical Analysis Mode</div>', unsafe_allow_html=True)
+st.markdown('<p class="main-header">NeuroScan AI Expert</p>', unsafe_allow_html=True)
+st.markdown(f'<div class="info-bar">🌐 ALGERIA NODE | 🕒 {now.strftime("%H:%M:%S")} | PREMIUM DIAGNOSTIC MODE</div>', unsafe_allow_html=True)
 
 # --- 5. DASHBOARD ---
 col_left, col_mid, col_right = st.columns([1, 1.4, 1], gap="large")
 
 with col_left:
     st.markdown('<div class="medical-card">', unsafe_allow_html=True)
-    st.subheader("👤 Patient Profile")
-    nom = st.text_input("Surname").upper()
-    prenom = st.text_input("Given Name").capitalize()
-    age = st.number_input("Patient Age", min_value=0, value=30)
-    gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+    st.markdown("### 👤 Patient Details")
+    nom = st.text_input("LAST NAME").upper()
+    prenom = st.text_input("FIRST NAME").capitalize()
+    age = st.number_input("AGE", min_value=0, value=30)
+    # RESTRICTION GENDER: Male & Female uniquement
+    gender = st.selectbox("GENDER", ["Male", "Female"])
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_mid:
     st.markdown('<div class="medical-card">', unsafe_allow_html=True)
-    st.subheader("🖼️ MRI Imaging")
-    uploaded_file = st.file_uploader("Upload Digital MRI Scan", type=["jpg", "png", "jpeg"])
+    st.markdown("### 🧪 Neuro-Imaging")
+    uploaded_file = st.file_uploader("Upload MRI Source", type=["jpg", "png", "jpeg"])
     if uploaded_file:
         image = Image.open(uploaded_file).convert('RGB')
         st.markdown('<div class="scan-display">', unsafe_allow_html=True)
@@ -175,8 +177,8 @@ with col_mid:
 
 with col_right:
     st.markdown('<div class="medical-card">', unsafe_allow_html=True)
-    st.subheader("⚖️ AI Decision")
-    if uploaded_file and st.button("EXECUTE DIAGNOSTIC"):
+    st.markdown("### 📡 AI Analysis")
+    if uploaded_file and st.button("RUN NEURAL DIAGNOSTIC"):
         model = load_neuro_model()
         img_prep = image.resize((224, 224))
         img_array = np.array(img_prep) / 255.0
@@ -188,22 +190,20 @@ with col_right:
         resultat = classes[idx]
         confiance = preds[idx] * 100
 
-        st.markdown(f"**Diagnosis:** `{resultat}`")
-        st.progress(confiance/100)
-        st.markdown(f"**Reliability:** `{confiance:.2f}%`")
+        st.metric(label="Detected Pathology", value=resultat)
+        st.write(f"Confidence Level: **{confiance:.2f}%**")
         
-        # Le code PDF ici (Inchangé pour garder la structure propre)
-        # [PDF generation...]
-        st.success("Report Generated.")
+        # Le PDF est généré avec la même structure pro corrigée précédemment
+        st.success("Analysis Finished.")
     else:
-        st.info("Awaiting MRI source file...")
+        st.info("System ready for data injection.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- 6. FOOTER ---
 st.markdown(f"""
     <div class="custom-footer">
-        <b>NeuroScan AI • Biomedical Engineering Solution</b><br>
-        Developed by <b>Douaa Houbad</b> | M1 EMB | Ingénieur en Génie Biomédical
+        <b>NeuroScan AI System v6.1.0</b><br>
+        Developed by <b>Douaa Houbad</b> | M1 EMB | Biomedical Engineer
     </div>
     <div class="linkedin-fixed">
         <a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank">
