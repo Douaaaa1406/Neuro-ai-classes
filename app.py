@@ -12,18 +12,25 @@ import io
 # --- 1. CONFIGURATION ---
 st.set_page_config(page_title="NeuroScan AI | Diagnostic", page_icon="🧠", layout="wide")
 
-# --- 2. DESIGN "GRIS ACIER & GRENAT" (PLUS HAUT & PLUS CONTRASTÉ) ---
+# --- 2. DESIGN "GRIS ACIER" SANS CASES BLANCHES ---
 st.markdown("""
 <style>
-    /* Fond Gris Acier (plus soutenu que le précédent) */
+    /* Fond principal Gris Acier Professionnel */
     [data-testid="stAppViewContainer"] {
-        background-color: #d1d5db;
+        background-color: #d1d5db !important;
         color: #111827;
     }
 
-    /* Remonter tout le contenu vers le haut */
+    /* SUPPRESSION DES CASES BLANCHES (Forcer la transparence) */
+    [data-testid="column"], [data-testid="stVerticalBlock"], .stColumn > div {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Remonter le contenu au maximum */
     .block-container {
-        padding-top: 2rem !important;
+        padding-top: 1rem !important;
         padding-bottom: 0rem !important;
     }
 
@@ -31,7 +38,7 @@ st.markdown("""
     .main-header {
         font-family: 'Times New Roman', serif;
         color: #111827;
-        font-size: 3.2em;
+        font-size: 3em;
         font-weight: bold;
         text-align: center;
         margin-bottom: 0px;
@@ -45,24 +52,22 @@ st.markdown("""
         text-transform: uppercase;
         letter-spacing: 2px;
         margin-top: -5px;
-        margin-bottom: 10px;
     }
 
     .live-date {
         text-align: center;
         color: #374151;
         font-family: 'Courier New', monospace;
-        font-size: 0.85em;
-        margin-bottom: 25px;
+        font-size: 0.9em;
+        margin-bottom: 20px;
     }
 
-    /* Cartes Gris Moyen pour un contraste parfait */
+    /* Cartes Gris Harmonisé (remplace les cases blanches) */
     .art-card {
-        background: #e5e7eb;
+        background: rgba(229, 231, 235, 0.5); /* Semi-transparent pour se fondre dans l'acier */
         border-radius: 8px;
         padding: 20px;
         border-top: 5px solid #800020;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         min-height: 520px;
         margin-bottom: 15px;
     }
@@ -77,26 +82,14 @@ st.markdown("""
         margin-bottom: 20px;
     }
 
-    /* Bouton d'Analyse Grenat */
+    /* Bouton Grenat */
     div.stButton > button {
         background: #800020 !important;
         color: white !important;
-        border: none !important;
         border-radius: 4px !important;
         font-family: 'Times New Roman', serif;
-        font-size: 1.1em !important;
         width: 100%;
         height: 45px;
-        transition: 0.2s;
-    }
-    div.stButton > button:hover {
-        background: #4d0013 !important;
-    }
-
-    /* Style des textes d'input */
-    label {
-        color: #111827 !important;
-        font-weight: bold !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -124,49 +117,30 @@ def load_neuro_model():
 def generate_medical_pdf(nom, prenom, age, gender, resultat, confiance, img, date_str):
     pdf = FPDF()
     pdf.add_page()
-    
-    # Header PDF
     pdf.set_font("Times", 'B', 20)
     pdf.set_text_color(128, 0, 32)
     pdf.cell(0, 20, "RAPPORT CLINIQUE - NEUROSCAN AI", 0, 1, 'C')
-    
     pdf.set_text_color(0, 0, 0)
     pdf.set_font("Times", 'B', 10)
-    pdf.cell(0, 10, f"Date de l'examen : {date_str}", 0, 1, 'R')
-    
+    pdf.cell(0, 10, f"Date : {date_str}", 0, 1, 'R')
     pdf.ln(5)
-    pdf.set_font("Times", 'B', 13)
+    pdf.set_font("Times", 'B', 12)
     pdf.cell(0, 10, "1. INFORMATIONS PATIENT", 0, 1)
-    
     pdf.set_font("Times", '', 11)
-    data = [
-        ["Nom / Prenom", f"{nom} {prenom}"],
-        ["Age / Genre", f"{age} / {gender}"],
-        ["Analyste", "Douaa Houbad (M1 EMB)"],
-        ["Horodatage", date_str]
-    ]
+    data = [["Nom/Prenom", f"{nom} {prenom}"], ["Age/Genre", f"{age}/{gender}"], ["Analyste", "Douaa Houbad (M1 EMB)"], ["Heure", date_str]]
     for row in data:
-        pdf.cell(60, 10, row[0], 1)
-        pdf.cell(100, 10, row[1], 1)
-        pdf.ln()
-
+        pdf.cell(50, 10, row[0], 1); pdf.cell(100, 10, row[1], 1); pdf.ln()
     pdf.ln(10)
-    img.save("temp_pdf.png")
-    pdf.image("temp_pdf.png", x=65, w=80)
-    
+    img.save("temp.png")
+    pdf.image("temp.png", x=65, w=80)
     pdf.ln(10)
-    pdf.set_font("Times", 'B', 15)
-    pdf.set_fill_color(240, 240, 240)
-    pdf.cell(0, 15, f"RÉSULTAT : {resultat.upper()}", 1, 1, 'C', True)
-    pdf.set_font("Times", 'I', 11)
-    pdf.cell(0, 10, f"Indice de confiance : {confiance:.2f}%", 0, 1, 'C')
-    
+    pdf.set_font("Times", 'B', 15); pdf.set_fill_color(240, 240, 240)
+    pdf.cell(0, 15, f"RESULTAT : {resultat.upper()}", 1, 1, 'C', True)
     return pdf.output(dest='S').encode('latin-1')
 
 # --- 4. INTERFACE ---
 algeria_tz = pytz.timezone('Africa/Algiers')
-now = datetime.datetime.now(algeria_tz)
-date_str = now.strftime("%d/%m/%Y | %H:%M:%S")
+date_str = datetime.datetime.now(algeria_tz).strftime("%d/%m/%Y | %H:%M:%S")
 
 st.markdown('<p class="main-header">NeuroScan AI</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-text">Biomedical Engineering • Algiers</p>', unsafe_allow_html=True)
@@ -199,21 +173,16 @@ with col3:
         model = load_neuro_model()
         img_array = np.array(image.resize((224, 224))) / 255.0
         preds = model.predict(np.expand_dims(img_array, axis=0))[0]
-        
         classes = ['Non-Cérébral', 'Gliome', 'Méningiome', 'Pas de Tumeur', 'Pituitaire']
-        res = classes[np.argmax(preds)]
-        conf = float(np.max(preds)) * 100
-
-        st.markdown(f"**Diagnostic :** {res}")
-        st.markdown(f"**Confiance :** {conf:.2f}%")
-
-        pdf_bytes = generate_medical_pdf(nom, prenom, age, gender, res, conf, image, date_str)
-        st.download_button("📥 TÉLÉCHARGER LE RAPPORT", pdf_bytes, f"NeuroScan_{nom}.pdf", "application/pdf")
+        res, conf = classes[np.argmax(preds)], float(np.max(preds)) * 100
+        st.write(f"**Diagnostic :** {res}")
+        st.write(f"**Confiance :** {conf:.2f}%")
+        pdf = generate_medical_pdf(nom, prenom, age, gender, res, conf, image, date_str)
+        st.download_button("📥 TÉLÉCHARGER LE RAPPORT", pdf, f"Report_{nom}.pdf", "application/pdf")
     else:
         st.write("En attente d'acquisition...")
-
-    st.markdown("<br><br><br><br>", unsafe_allow_html=True)
-    st.markdown(f'<div style="text-align:right; border-top:1px solid #9ca3af; padding-top:100px;"><a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank" style="color:#800020; font-weight:bold; text-decoration:none;">LinkedIn</a></div>', unsafe_allow_html=True)
+    
+    st.markdown(f'<div style="text-align:right; margin-top:100px;"><a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank" style="color:#800020; font-weight:bold; text-decoration:none;">LinkedIn</a></div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown(f'<p style="text-align:center; color:#374151; font-family:serif; margin-top:30px;">Douaa Houbad | M1 EMB | 2026</p>', unsafe_allow_html=True)
+st.markdown(f'<p style="text-align:center; color:#374151; font-family:serif; margin-top:20px;">Douaa Houbad | M1 EMB | 2026</p>', unsafe_allow_html=True)
