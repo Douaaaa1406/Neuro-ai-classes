@@ -12,74 +12,85 @@ import io
 # --- 1. CONFIGURATION ---
 st.set_page_config(page_title="NeuroScan AI", page_icon="🧠", layout="wide")
 
-# --- 2. STYLE ÉPURÉ "HIGH-CONTRAST SOFT" ---
+# --- 2. STYLE ÉPURÉ "STUDIO TECHNIQUE" (SANS RECTANGLES BLANCS) ---
 st.markdown("""
 <style>
-    /* Fond Gris Clair Uniforme (Contraste amélioré) */
+    /* Fond Gris Clair Uniforme - Meilleur Contraste */
     [data-testid="stAppViewContainer"] {
-        background-color: #e8ebf0;
-        color: #2c3e50;
+        background-color: #e5e7eb;
+        color: #111827;
     }
 
-    /* En-tête sans bloc */
-    .header-container {
+    /* En-tête minimaliste */
+    .header-area {
         text-align: center;
-        margin-top: -50px;
-        margin-bottom: 40px;
+        margin-top: -60px;
+        margin-bottom: 30px;
     }
 
-    .main-title {
+    .title-text {
         font-family: 'Times New Roman', serif;
-        color: #1a1a1a;
-        font-size: 3.2em;
+        font-size: 3.5em;
+        font-weight: bold;
+        color: #111827;
         margin-bottom: 0px;
     }
 
-    .sub-title {
+    .subtitle-text {
         font-family: 'Times New Roman', serif;
-        color: #800020; /* Grenat */
-        font-size: 1.1em;
-        letter-spacing: 4px;
-        font-weight: bold;
+        font-size: 1.2em;
+        color: #800020;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        margin-top: -10px;
     }
 
-    /* Suppression des rectangles blancs : On utilise des conteneurs invisibles */
-    .column-content {
-        padding: 10px;
-        border-top: 2px solid #800020; /* Ligne de séparation élégante */
-        margin-top: 10px;
+    /* Suppression des boites blanches : Conteneurs transparents */
+    .stColumn > div {
+        background-color: transparent !important;
+        padding: 15px;
     }
 
-    .label-style {
+    /* Ligne de séparation Grenat fine */
+    .section-header {
         font-family: 'Times New Roman', serif;
         color: #800020;
-        font-size: 1.3em;
+        font-size: 1.4em;
         font-weight: bold;
-        margin-bottom: 15px;
+        border-bottom: 2px solid #800020;
+        margin-bottom: 20px;
+        padding-bottom: 5px;
     }
 
-    /* Bouton d'Analyse - Style Minimaliste Grenat */
+    /* Style des boutons */
     div.stButton > button {
         background-color: #800020 !important;
         color: white !important;
         border: none !important;
-        border-radius: 2px !important;
-        height: 45px;
-        width: 100%;
+        border-radius: 4px !important;
         font-family: 'Times New Roman', serif;
-        font-size: 1.1em !important;
+        font-size: 1.2em !important;
+        width: 100%;
+        height: 50px;
         transition: 0.3s;
     }
     div.stButton > button:hover {
         background-color: #4d0013 !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    /* Footer LinkedIn discret */
-    .footer-link {
-        text-align: right;
-        margin-top: 50px;
+    /* Inputs discrets */
+    .stTextInput input, .stNumberInput input, .stSelectbox div {
+        background-color: #f9fafb !important;
+        border: 1px solid #d1d5db !important;
     }
-    .footer-link a {
+
+    /* Footer LinkedIn */
+    .linkedin-link {
+        text-align: right;
+        margin-top: 40px;
+    }
+    .linkedin-link a {
         color: #800020 !important;
         text-decoration: none;
         font-family: 'Times New Roman', serif;
@@ -94,10 +105,8 @@ st.markdown("""
 def load_neuro_model():
     model_path = 'brain_tumor_model_v6_final.keras'
     if not os.path.exists(model_path):
-        # [cite_start]Utilisation du modèle spécifié dans le rapport [cite: 3]
         gdown.download(f'https://drive.google.com/uc?id=1QRVvhNHSx7qgw0GIDrRLsuX09uItsXM2', model_path, quiet=False)
     
-    # Architecture simplifiée pour l'inférence
     base_model = tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights=None)
     model = tf.keras.Sequential([
         base_model,
@@ -107,10 +116,11 @@ def load_neuro_model():
     model.load_weights(model_path)
     return model
 
-def create_pdf_report(nom, prenom, age, gender, result, confidence, img, date_str):
+def create_medical_pdf(nom, prenom, age, gender, result, confidence, img, date_str):
     pdf = FPDF()
     pdf.add_page()
-    # Police Times New Roman pour le prestige
+    
+    # Police Times New Roman exigée
     pdf.set_font("Times", 'B', 20)
     pdf.set_text_color(128, 0, 32)
     pdf.cell(0, 20, "DIAGNOSTIC REPORT: NEUROSCAN AI", 0, 1, 'C')
@@ -118,88 +128,91 @@ def create_pdf_report(nom, prenom, age, gender, result, confidence, img, date_st
     pdf.ln(10)
     pdf.set_font("Times", 'B', 12)
     pdf.set_text_color(0, 0, 0)
-    [cite_start]pdf.cell(0, 10, "1. PATIENT INFORMATION", 0, 1) [cite: 2]
+    pdf.cell(0, 10, "1. PATIENT INFORMATION", 0, 1)
     
+    # Tableau de données du patient
     pdf.set_font("Times", '', 11)
-    # [cite_start]Tableau de données [cite: 3]
     pdf.cell(50, 8, "Name", 1)
     pdf.cell(100, 8, f"{nom} {prenom}", 1, 1)
     pdf.cell(50, 8, "Age / Gender", 1)
     pdf.cell(100, 8, f"{age} / {gender}", 1, 1)
     pdf.cell(50, 8, "Prediction Model", 1)
     pdf.cell(100, 8, "MobileNetV2-NeuroV6", 1, 1)
-    pdf.cell(50, 8, "Date", 1)
+    pdf.cell(50, 8, "Test Date", 1)
     pdf.cell(100, 8, date_str, 1, 1)
 
     pdf.ln(10)
-    img.save("scan_temp.png")
-    pdf.image("scan_temp.png", x=60, w=90)
+    # Image IRM
+    img.save("temp_report_img.png")
+    pdf.image("temp_report_img.png", x=60, w=90)
     
     pdf.ln(10)
+    # Conclusion Médicale
     pdf.set_font("Times", 'B', 14)
     pdf.set_fill_color(240, 240, 240)
-    [cite_start]pdf.cell(0, 12, f"RESULT: {result.upper()}", 1, 1, 'C', True) [cite: 6]
+    pdf.cell(0, 15, f"RESULT: {result.upper()}", 1, 1, 'C', True)
     pdf.set_font("Times", 'I', 11)
-    [cite_start]pdf.cell(0, 10, f"Confidence: {confidence:.2f}%", 0, 1, 'C') [cite: 7]
+    pdf.cell(0, 10, f"Algorithm Confidence: {confidence:.2f}%", 0, 1, 'C')
+
+    pdf.set_y(-30)
+    pdf.set_font("Times", 'I', 8)
+    pdf.multi_cell(0, 5, "Disclaimer: This report is generated by a deep learning algorithm. It is for research purposes and must be validated by a professional.", 0, 'C')
 
     return pdf.output(dest='S').encode('latin-1')
 
-# --- 4. INTERFACE ---
+# --- 4. INTERFACE UTILISATEUR ---
 algeria_tz = pytz.timezone('Africa/Algiers')
 now = datetime.datetime.now(algeria_tz)
-date_full = now.strftime("%d/%m/%Y - %H:%M")
+date_display = now.strftime("%d/%m/%Y - %H:%M")
 
-st.markdown(f"""
-<div class="header-container">
-    <p class="main-title">NeuroScan AI</p>
-    <p class="sub-title">ENGINEERING & DIAGNOSTICS</p>
-</div>
+st.markdown("""
+    <div class="header-area">
+        <p class="title-text">NeuroScan AI</p>
+        <p class="subtitle-text">Engineering & Diagnostics</p>
+    </div>
 """, unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3, gap="large")
 
 with col1:
-    st.markdown('<p class="label-style">Patient Data</p>', unsafe_allow_html=True)
-    st.markdown('<div class="column-content">', unsafe_allow_html=True)
-    nom = st.text_input("LAST NAME").upper()
-    prenom = st.text_input("FIRST NAME").capitalize()
-    [cite_start]age = st.number_input("AGE", min_value=0, value=30) [cite: 3]
-    [cite_start]gender = st.selectbox("GENDER", ["Male", "Female"]) [cite: 3]
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<p class="section-header">Patient Information</p>', unsafe_allow_html=True)
+    nom_val = st.text_input("LAST NAME").upper()
+    prenom_val = st.text_input("FIRST NAME").capitalize()
+    age_val = st.number_input("AGE", min_value=0, max_value=120, value=30)
+    gender_val = st.selectbox("GENDER", ["Male", "Female"])
 
 with col2:
-    st.markdown('<p class="label-style">MRI Scan</p>', unsafe_allow_html=True)
-    st.markdown('<div class="column-content">', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Upload MRI", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+    st.markdown('<p class="section-header">MRI Acquisition</p>', unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("Upload Scan", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
     if uploaded_file:
         image = Image.open(uploaded_file).convert('RGB')
-        st.image(image, use_container_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.image(image, use_container_width=True, caption="Current MRI Scan")
 
 with col3:
-    st.markdown('<p class="label-style">Analysis</p>', unsafe_allow_html=True)
-    st.markdown('<div class="column-content">', unsafe_allow_html=True)
-    if uploaded_file and st.button("ANALYZE SCAN"):
+    st.markdown('<p class="section-header">Neural Analysis</p>', unsafe_allow_html=True)
+    if uploaded_file and st.button("START ANALYSIS"):
         model = load_neuro_model()
-        img_array = np.array(image.resize((224, 224))) / 255.0
-        preds = model.predict(np.expand_dims(img_array, axis=0))[0]
+        img_input = np.array(image.resize((224, 224))) / 255.0
+        preds = model.predict(np.expand_dims(img_input, axis=0))[0]
         
-        # Classes définies dans le système
         classes = ['Non-Brain', 'Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
         idx = np.argmax(preds)
         res_text = classes[idx]
-        conf_val = float(preds[idx]) * 100
+        conf_score = float(preds[idx]) * 100
 
-        st.markdown(f"**Status:** {res_text}")
-        st.markdown(f"**Accuracy:** {conf_val:.2f}%")
+        st.markdown(f"**Diagnostic Result:** {res_text}")
+        st.markdown(f"**Confidence Level:** {conf_score:.2f}%")
         
-        # Rapport PDF en Times New Roman
-        pdf_out = create_pdf_report(nom, prenom, age, gender, res_text, conf_val, image, date_full)
-        st.download_button("📥 DOWNLOAD PDF REPORT", pdf_out, f"Diagnostic_{nom}.pdf", "application/pdf")
+        # Génération du rapport PDF
+        pdf_data = create_medical_pdf(nom_val, prenom_val, age_val, gender_val, res_text, conf_score, image, date_display)
+        st.download_button("📥 DOWNLOAD CLINICAL REPORT", pdf_data, f"Report_{nom_val}.pdf", "application/pdf")
     else:
-        st.write("Awaiting MRI acquisition...")
-    
-    st.markdown(f'<div class="footer-link"><a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank">LinkedIn Profile</a></div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.info("System ready. Please upload an MRI scan to begin.")
 
-st.markdown(f'<p style="text-align:center; color:#555; font-family:Times; padding-top:60px;">Designed by Douaa Houbad | M1 EMB Biomedical Engineer | 2026</p>', unsafe_allow_html=True)
+    st.markdown(f"""
+        <div class="linkedin-link">
+            <a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank">LinkedIn Profile</a>
+        </div>
+    """, unsafe_allow_html=True)
+
+st.markdown(f'<p style="text-align:center; color:#4b5563; font-family:Times; padding-top:100px;">Designed by Douaa Houbad | M1 EMB Biomedical Engineer | {date_display}</p>', unsafe_allow_html=True)
