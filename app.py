@@ -10,102 +10,100 @@ import pytz
 
 # --- 1. CONFIGURATION DE LA PAGE ---
 st.set_page_config(
-    page_title="NeuroScan AI | Dashboard",
+    page_title="NeuroScan AI | Clinical Dashboard",
     page_icon="🧠",
     layout="wide"
 )
 
-# --- 2. DESIGN CSS "ADVANCED MEDICAL HUD" ---
+# --- 2. DESIGN "CLINICAL LIGHT" (NOIR & BLANC) ---
 st.markdown("""
 <style>
-    /* Fond sombre avec texture de grille */
+    /* Fond principal Clair */
     [data-testid="stAppViewContainer"] {
-        background-color: #050a10;
-        background-image: linear-gradient(0deg, transparent 24%, rgba(79, 172, 254, .05) 25%, rgba(79, 172, 254, .05) 26%, transparent 27%, transparent 74%, rgba(79, 172, 254, .05) 75%, rgba(79, 172, 254, .05) 76%, transparent 77%, transparent), 
-                          linear-gradient(90deg, transparent 24%, rgba(79, 172, 254, .05) 25%, rgba(79, 172, 254, .05) 26%, transparent 27%, transparent 74%, rgba(79, 172, 254, .05) 75%, rgba(79, 172, 254, .05) 76%, transparent 77%, transparent);
-        background-size: 50px 50px;
-        color: #e0f2ff;
+        background-color: #ffffff;
+        color: #000000;
     }
-
-    /* En-tête avec effet Glow */
+    
+    /* En-tête en Noir Profond */
     .main-header {
-        font-family: 'Segoe UI', sans-serif;
-        color: #4facfe;
-        font-size: 3.5em;
-        font-weight: 900;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        color: #000000;
+        font-size: 3em;
+        font-weight: 800;
         text-align: center;
-        text-shadow: 0 0 20px rgba(79, 172, 254, 0.6);
         margin-bottom: 5px;
-        letter-spacing: 5px;
+        letter-spacing: -1px;
     }
 
-    /* Container des informations (Cartes) */
+    /* Barre d'état stylisée */
+    .info-bar {
+        background: #000000;
+        padding: 10px;
+        border-radius: 0px;
+        color: #ffffff;
+        text-align: center;
+        font-family: monospace;
+        font-size: 0.85em;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+    }
+
+    /* Cartes Médicales (Contraste Noir/Blanc) */
     .medical-card {
-        background: rgba(13, 27, 42, 0.8);
-        border: 1px solid #4facfe;
-        border-radius: 10px;
+        background: #ffffff;
+        border: 2px solid #000000;
+        border-radius: 0px; /* Style minimaliste angulaire */
         padding: 20px;
-        box-shadow: inset 0 0 15px rgba(79, 172, 254, 0.2);
         margin-bottom: 20px;
     }
 
-    /* Bouton d'Analyse - Look "Glow Blue" */
+    /* Bouton d'Analyse Noir */
     div.stButton > button {
-        background: transparent !important;
-        color: #4facfe !important;
-        border: 2px solid #4facfe !important;
+        background: #000000 !important;
+        color: #ffffff !important;
+        border: none !important;
         padding: 15px 0px !important;
         width: 100%;
         font-weight: bold !important;
-        font-size: 1.2em !important;
+        font-size: 1.1em !important;
         text-transform: uppercase;
         letter-spacing: 2px;
-        transition: 0.4s;
-        box-shadow: 0 0 10px rgba(79, 172, 254, 0.3);
+        transition: 0.3s;
+        border-radius: 0px !important;
     }
     div.stButton > button:hover {
-        background: #4facfe !important;
-        color: #050a10 !important;
-        box-shadow: 0 0 30px #4facfe;
+        background: #333333 !important;
+        transform: translateY(-2px);
     }
 
-    /* Style des Inputs */
+    /* Inputs personnalisés */
     input, select, .stSelectbox {
-        background-color: #0a192f !important;
-        border: 1px solid #1e3a5f !important;
-        color: #4facfe !important;
+        border: 1px solid #000000 !important;
+        border-radius: 0px !important;
     }
 
-    /* Centrage de l'image scannée */
+    /* Affichage de l'image (Cadre Noir) */
     .scan-display {
         display: flex;
         justify-content: center;
-        border: 3px solid #1e3a5f;
-        padding: 10px;
-        background: black;
-        border-radius: 15px;
-        box-shadow: 0 0 40px rgba(0,0,0,1);
+        border: 5px solid #000000;
+        background: #f0f0f0;
+        padding: 5px;
     }
 
-    /* LinkedIn Bouton */
+    /* LinkedIn bouton discret */
     .linkedin-fixed {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background: rgba(0, 119, 181, 0.2);
-        border: 1px solid #0077b5;
-        padding: 10px 20px;
-        border-radius: 30px;
-        backdrop-filter: blur(5px);
-        transition: 0.3s;
-    }
-    .linkedin-fixed:hover {
-        background: rgba(0, 119, 181, 0.8);
+        background: #000000;
+        padding: 10px 15px;
+        z-index: 1000;
     }
     .linkedin-fixed a {
-        color: white !important;
+        color: #ffffff !important;
         text-decoration: none !important;
-        font-size: 0.9em;
+        font-size: 0.8em;
         font-weight: bold;
     }
 
@@ -113,15 +111,16 @@ st.markdown("""
     .custom-footer {
         margin-top: 50px;
         text-align: center;
-        border-top: 1px solid #1e3a5f;
+        border-top: 2px solid #000000;
         padding: 20px;
-        font-family: monospace;
-        color: #4facfe;
+        font-family: 'Helvetica', sans-serif;
+        color: #000000;
+        font-weight: bold;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. CHARGEMENT DU MODÈLE (Inchangé) ---
+# --- 3. CHARGEMENT DU MODÈLE ---
 @st.cache_resource
 def load_neuro_model():
     model_path = 'brain_tumor_model_v6_final.keras'
@@ -149,24 +148,24 @@ algeria_tz = pytz.timezone('Africa/Algiers')
 now = datetime.datetime.now(algeria_tz)
 
 st.markdown('<p class="main-header">NEUROSCAN CORE AI</p>', unsafe_allow_html=True)
-st.markdown(f'<div style="text-align:center; color:#4facfe; font-family:monospace; margin-bottom:30px;">🛰️ ALGIERS_STATION | DATA_CLOCK: {now.strftime("%H:%M:%S")} | STATUS: ONLINE</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="info-bar">ALGIERS STATION | SYSTEM TIME: {now.strftime("%H:%M:%S")} | MODE: CLINICAL_LIGHT</div>', unsafe_allow_html=True)
 
-# --- 5. MAIN INTERFACE ---
+# --- 5. INTERFACE PRINCIPALE ---
 col_left, col_mid, col_right = st.columns([1, 1.5, 1], gap="medium")
 
 with col_left:
     st.markdown('<div class="medical-card">', unsafe_allow_html=True)
-    st.subheader("📋 BIOMETRICS")
-    nom = st.text_input("PATIENT LAST NAME").upper()
-    prenom = st.text_input("PATIENT FIRST NAME").capitalize()
+    st.markdown("### 📋 PATIENT DATA")
+    nom = st.text_input("LAST NAME").upper()
+    prenom = st.text_input("FIRST NAME").capitalize()
     age = st.number_input("AGE", min_value=0, value=30)
-    gender = st.selectbox("GENDER", ["MALE", "FEMALE"])
+    gender = st.selectbox("GENDER", ["MALE", "FEMALE", "OTHER"])
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_mid:
     st.markdown('<div class="medical-card">', unsafe_allow_html=True)
-    st.subheader("🧠 NEURAL IMAGING")
-    uploaded_file = st.file_uploader("DROP MRI SCAN HERE", type=["jpg", "png", "jpeg"])
+    st.markdown("### 🧠 MRI SCAN")
+    uploaded_file = st.file_uploader("UPLOAD SOURCE FILE", type=["jpg", "png", "jpeg"])
     if uploaded_file:
         image = Image.open(uploaded_file).convert('RGB')
         st.markdown('<div class="scan-display">', unsafe_allow_html=True)
@@ -176,8 +175,8 @@ with col_mid:
 
 with col_right:
     st.markdown('<div class="medical-card">', unsafe_allow_html=True)
-    st.subheader("⚡ DIAGNOSTIC")
-    if uploaded_file and st.button("EXECUTE ANALYSIS"):
+    st.markdown("### ⚡ DIAGNOSTIC")
+    if uploaded_file and st.button("RUN ANALYSIS"):
         model = load_neuro_model()
         img_prep = image.resize((224, 224))
         img_array = np.array(img_prep) / 255.0
@@ -192,11 +191,52 @@ with col_right:
         st.markdown(f"**RESULT:** `{resultat}`")
         st.markdown(f"**CONFIDENCE:** `{confiance:.2f}%`")
         
-        # LOGIQUE PDF (Utilise le code précédent pour le tableau sans erreur)
-        # [Génération PDF ici identique au code précédent...]
-        st.info("Report is ready for export.")
+        # --- PDF GÉNÉRATION (Version Professionnelle Stable) ---
+        class PDF(FPDF):
+            def header(self):
+                self.set_fill_color(0, 0, 0)
+                self.rect(0, 0, 210, 35, 'F')
+                self.set_font('Arial', 'B', 18)
+                self.set_text_color(255, 255, 255)
+                self.cell(0, 15, 'NEUROSCAN AI - CLINICAL REPORT', 0, 1, 'C')
+                self.ln(10)
+
+        pdf = PDF()
+        pdf.add_page()
+        pdf.set_font('Arial', 'B', 12)
+        pdf.set_text_color(0, 0, 0)
+        pdf.cell(0, 10, "1. PATIENT AND TEST DETAILS", 0, 1)
+        
+        pdf.set_font('Arial', '', 10)
+        details = [
+            ["Name", f"{nom} {prenom}"],
+            ["Age / Gender", f"{age} / {gender}"],
+            ["Date / Time", f"{now.strftime('%d/%m/%Y')} at {now.strftime('%H:%M')}"],
+            ["AI Model", "MobileNetV2-NeuroV6"]
+        ]
+        for item in details:
+            pdf.cell(50, 8, item[0], 1)
+            pdf.cell(100, 8, item[1], 1)
+            pdf.ln()
+
+        pdf.ln(5)
+        pdf.cell(0, 10, "2. SCAN ANALYSIS", 0, 1)
+        image.save("temp_scan.jpg")
+        pdf.image("temp_scan.jpg", x=65, w=80)
+        pdf.set_y(pdf.get_y() + 85)
+
+        pdf.set_font('Arial', 'B', 14)
+        pdf.cell(0, 12, f"CONCLUSION: {resultat.upper()}", 1, 1, 'C')
+        
+        pdf.set_y(-30)
+        pdf.set_font('Arial', 'I', 8)
+        pdf.set_text_color(100, 100, 100)
+        pdf.multi_cell(0, 5, "Disclaimer: AI-generated research tool. Not a substitute for professional medical advice.", 0, 'C')
+
+        pdf_bytes = pdf.output(dest='S').encode('latin-1')
+        st.download_button("📥 DOWNLOAD REPORT", pdf_bytes, f"Report_{nom}.pdf", "application/pdf")
     else:
-        st.write("Waiting for data...")
+        st.write("IDLE - System ready.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- 6. FOOTER & LINKEDIN ---
