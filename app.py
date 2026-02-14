@@ -160,7 +160,7 @@ with col_left:
     nom = st.text_input("PATIENT LAST NAME").upper()
     prenom = st.text_input("PATIENT FIRST NAME").capitalize()
     age = st.number_input("AGE", min_value=0, value=30)
-    gender = st.selectbox("GENDER", ["MALE", "FEMALE", "OTHER"])
+    gender = st.selectbox("GENDER", ["MALE", "FEMALE"])
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col_mid:
