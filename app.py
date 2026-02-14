@@ -7,21 +7,18 @@ import datetime
 import os
 import gdown
 import pytz
-import io
 
 # --- 1. CONFIGURATION ---
 st.set_page_config(page_title="NeuroScan AI", page_icon="🧠", layout="wide")
 
-# --- 2. STYLE ÉPURÉ "STUDIO TECHNIQUE" (SANS RECTANGLES BLANCS) ---
+# --- 2. STYLE ÉPURÉ & CONTRASTE (SANS RECTANGLES BLANCS) ---
 st.markdown("""
 <style>
-    /* Fond Gris Clair Uniforme - Meilleur Contraste */
     [data-testid="stAppViewContainer"] {
-        background-color: #e5e7eb;
+        background-color: #e5e7eb; /* Gris clair pro */
         color: #111827;
     }
 
-    /* En-tête minimaliste */
     .header-area {
         text-align: center;
         margin-top: -60px;
@@ -33,25 +30,21 @@ st.markdown("""
         font-size: 3.5em;
         font-weight: bold;
         color: #111827;
-        margin-bottom: 0px;
     }
 
     .subtitle-text {
         font-family: 'Times New Roman', serif;
         font-size: 1.2em;
-        color: #800020;
+        color: #800020; /* Grenat */
         letter-spacing: 5px;
         text-transform: uppercase;
-        margin-top: -10px;
     }
 
-    /* Suppression des boites blanches : Conteneurs transparents */
-    .stColumn > div {
+    /* Suppression des bordures et fonds blancs des colonnes */
+    [data-testid="column"] {
         background-color: transparent !important;
-        padding: 15px;
     }
 
-    /* Ligne de séparation Grenat fine */
     .section-header {
         font-family: 'Times New Roman', serif;
         color: #800020;
@@ -62,65 +55,42 @@ st.markdown("""
         padding-bottom: 5px;
     }
 
-    /* Style des boutons */
     div.stButton > button {
         background-color: #800020 !important;
         color: white !important;
         border: none !important;
-        border-radius: 4px !important;
         font-family: 'Times New Roman', serif;
         font-size: 1.2em !important;
         width: 100%;
         height: 50px;
-        transition: 0.3s;
-    }
-    div.stButton > button:hover {
-        background-color: #4d0013 !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-    /* Inputs discrets */
-    .stTextInput input, .stNumberInput input, .stSelectbox div {
-        background-color: #f9fafb !important;
-        border: 1px solid #d1d5db !important;
-    }
-
-    /* Footer LinkedIn */
-    .linkedin-link {
-        text-align: right;
-        margin-top: 40px;
-    }
-    .linkedin-link a {
-        color: #800020 !important;
-        text-decoration: none;
-        font-family: 'Times New Roman', serif;
-        font-weight: bold;
-        border-bottom: 1px solid #800020;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. FONCTIONS TECHNIQUES ---
+# --- 3. FONCTIONS TECHNIQUES (CORRECTION DU LOAD_WEIGHTS) ---
 @st.cache_resource
 def load_neuro_model():
     model_path = 'brain_tumor_model_v6_final.keras'
     if not os.path.exists(model_path):
         gdown.download(f'https://drive.google.com/uc?id=1QRVvhNHSx7qgw0GIDrRLsuX09uItsXM2', model_path, quiet=False)
     
-    base_model = tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights=None)
-    model = tf.keras.Sequential([
-        base_model,
-        tf.keras.layers.GlobalAveragePooling2D(),
-        tf.keras.layers.Dense(5, activation='softmax')
-    ])
-    model.load_weights(model_path)
+    try:
+        # TENTATIVE 1 : Charger comme un modèle complet (Recommandé pour .keras)
+        model = tf.keras.models.load_model(model_path)
+    except Exception:
+        # TENTATIVE 2 : Si c'est uniquement des poids, reconstruire l'architecture
+        base_model = tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights=None)
+        model = tf.keras.Sequential([
+            base_model,
+            tf.keras.layers.GlobalAveragePooling2D(),
+            tf.keras.layers.Dense(5, activation='softmax')
+        ])
+        model.load_weights(model_path)
     return model
 
 def create_medical_pdf(nom, prenom, age, gender, result, confidence, img, date_str):
     pdf = FPDF()
     pdf.add_page()
-    
-    # Police Times New Roman exigée
     pdf.set_font("Times", 'B', 20)
     pdf.set_text_color(128, 0, 32)
     pdf.cell(0, 20, "DIAGNOSTIC REPORT: NEUROSCAN AI", 0, 1, 'C')
@@ -130,89 +100,70 @@ def create_medical_pdf(nom, prenom, age, gender, result, confidence, img, date_s
     pdf.set_text_color(0, 0, 0)
     pdf.cell(0, 10, "1. PATIENT INFORMATION", 0, 1)
     
-    # Tableau de données du patient
     pdf.set_font("Times", '', 11)
-    pdf.cell(50, 8, "Name", 1)
-    pdf.cell(100, 8, f"{nom} {prenom}", 1, 1)
-    pdf.cell(50, 8, "Age / Gender", 1)
-    pdf.cell(100, 8, f"{age} / {gender}", 1, 1)
-    pdf.cell(50, 8, "Prediction Model", 1)
-    pdf.cell(100, 8, "MobileNetV2-NeuroV6", 1, 1)
-    pdf.cell(50, 8, "Test Date", 1)
-    pdf.cell(100, 8, date_str, 1, 1)
+    # Tableau Patient 
+    data = [
+        ["Name", f"{nom} {prenom}"],
+        ["Age / Gender", f"{age} / {gender}"],
+        ["Prediction Model", "MobileNetV2-NeuroV6"],
+        ["Date", date_str]
+    ]
+    for row in data:
+        pdf.cell(50, 8, row[0], 1)
+        pdf.cell(100, 8, row[1], 1)
+        pdf.ln()
 
     pdf.ln(10)
-    # Image IRM
-    img.save("temp_report_img.png")
-    pdf.image("temp_report_img.png", x=60, w=90)
+    img.save("temp_scan.png")
+    pdf.image("temp_scan.png", x=60, w=90)
     
     pdf.ln(10)
-    # Conclusion Médicale
     pdf.set_font("Times", 'B', 14)
     pdf.set_fill_color(240, 240, 240)
     pdf.cell(0, 15, f"RESULT: {result.upper()}", 1, 1, 'C', True)
     pdf.set_font("Times", 'I', 11)
     pdf.cell(0, 10, f"Algorithm Confidence: {confidence:.2f}%", 0, 1, 'C')
-
-    pdf.set_y(-30)
-    pdf.set_font("Times", 'I', 8)
-    pdf.multi_cell(0, 5, "Disclaimer: This report is generated by a deep learning algorithm. It is for research purposes and must be validated by a professional.", 0, 'C')
-
+    
     return pdf.output(dest='S').encode('latin-1')
 
-# --- 4. INTERFACE UTILISATEUR ---
+# --- 4. INTERFACE ---
 algeria_tz = pytz.timezone('Africa/Algiers')
-now = datetime.datetime.now(algeria_tz)
-date_display = now.strftime("%d/%m/%Y - %H:%M")
+date_display = datetime.datetime.now(algeria_tz).strftime("%d/%m/%Y - %H:%M")
 
-st.markdown("""
-    <div class="header-area">
-        <p class="title-text">NeuroScan AI</p>
-        <p class="subtitle-text">Engineering & Diagnostics</p>
-    </div>
-""", unsafe_allow_html=True)
+st.markdown(f'<div class="header-area"><p class="title-text">NeuroScan AI</p><p class="subtitle-text">Engineering & Diagnostics</p></div>', unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3, gap="large")
 
 with col1:
     st.markdown('<p class="section-header">Patient Information</p>', unsafe_allow_html=True)
-    nom_val = st.text_input("LAST NAME").upper()
-    prenom_val = st.text_input("FIRST NAME").capitalize()
-    age_val = st.number_input("AGE", min_value=0, max_value=120, value=30)
-    gender_val = st.selectbox("GENDER", ["Male", "Female"])
+    nom = st.text_input("LAST NAME").upper()
+    prenom = st.text_input("FIRST NAME").capitalize()
+    age = st.number_input("AGE", min_value=0, value=30)
+    gender = st.selectbox("GENDER", ["Male", "Female"])
 
 with col2:
     st.markdown('<p class="section-header">MRI Acquisition</p>', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Upload Scan", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+    uploaded_file = st.file_uploader("Scan", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
     if uploaded_file:
         image = Image.open(uploaded_file).convert('RGB')
-        st.image(image, use_container_width=True, caption="Current MRI Scan")
+        st.image(image, use_container_width=True)
 
 with col3:
     st.markdown('<p class="section-header">Neural Analysis</p>', unsafe_allow_html=True)
     if uploaded_file and st.button("START ANALYSIS"):
         model = load_neuro_model()
-        img_input = np.array(image.resize((224, 224))) / 255.0
-        preds = model.predict(np.expand_dims(img_input, axis=0))[0]
+        img_prep = np.array(image.resize((224, 224))) / 255.0
+        preds = model.predict(np.expand_dims(img_prep, axis=0))[0]
         
         classes = ['Non-Brain', 'Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
         idx = np.argmax(preds)
         res_text = classes[idx]
-        conf_score = float(preds[idx]) * 100
+        conf = float(preds[idx]) * 100
 
-        st.markdown(f"**Diagnostic Result:** {res_text}")
-        st.markdown(f"**Confidence Level:** {conf_score:.2f}%")
+        st.write(f"**Diagnostic :** {res_text}")
+        st.write(f"**Confiance :** {conf:.2f}%")
         
-        # Génération du rapport PDF
-        pdf_data = create_medical_pdf(nom_val, prenom_val, age_val, gender_val, res_text, conf_score, image, date_display)
-        st.download_button("📥 DOWNLOAD CLINICAL REPORT", pdf_data, f"Report_{nom_val}.pdf", "application/pdf")
-    else:
-        st.info("System ready. Please upload an MRI scan to begin.")
+        pdf_bytes = create_medical_pdf(nom, prenom, age, gender, res_text, conf, image, date_display)
+        st.download_button("📥 DOWNLOAD REPORT", pdf_bytes, f"Report_{nom}.pdf", "application/pdf")
 
-    st.markdown(f"""
-        <div class="linkedin-link">
-            <a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank">LinkedIn Profile</a>
-        </div>
-    """, unsafe_allow_html=True)
-
-st.markdown(f'<p style="text-align:center; color:#4b5563; font-family:Times; padding-top:100px;">Designed by Douaa Houbad | M1 EMB Biomedical Engineer | {date_display}</p>', unsafe_allow_html=True)
+st.markdown(f'<p style="text-align:center; color:#4b5563; font-family:Times; margin-top:100px;">Designed by Douaa Houbad | M1 EMB | {date_display}</p>', unsafe_allow_html=True)
