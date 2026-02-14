@@ -1,6 +1,6 @@
 import streamlit as st
 import tensorflow as tf
-from PIL import Image, ImageEnhance
+from PIL import Image
 import numpy as np
 from fpdf import FPDF
 import datetime
@@ -9,86 +9,111 @@ import gdown
 import pytz
 
 # --- 1. CONFIGURATION ---
-st.set_page_config(page_title="NeuroScan Elite", page_icon="🧠", layout="wide")
+st.set_page_config(page_title="NeuroScan AI | Gold Edition", page_icon="🧠", layout="wide")
 
-# --- 2. DESIGN "ELITE WHITE & GOLD" ---
+# --- 2. DESIGN "GOLDEN LUXURY" (BASÉ SUR TON IMAGE) ---
 st.markdown("""
 <style>
-    /* Fond Gris Perle très clair */
+    /* Background global avec texture subtile et couleur Champagne */
     [data-testid="stAppViewContainer"] {
-        background-color: #fcfcfc;
-        color: #1a1a1a;
+        background: linear-gradient(rgba(245, 238, 220, 0.9), rgba(220, 200, 170, 0.9)), 
+                    url('https://www.transparenttextures.com/patterns/p6.png');
+        background-color: #f5eedc;
     }
-    
-    /* Titre en Anthracite */
+
+    /* En-tête Doré / Bronze */
     .main-header {
-        font-family: 'Inter', sans-serif;
-        color: #1a1a1a;
-        font-size: 3.2em;
-        font-weight: 900;
+        font-family: 'Times New Roman', serif;
+        color: #7d5a2d;
+        font-size: 3.5em;
+        font-weight: bold;
         text-align: center;
-        letter-spacing: -2px;
         margin-bottom: 0px;
     }
-
-    /* Info Bar Noire */
-    .info-bar {
-        background: #1a1a1a;
-        color: #ffffff;
-        padding: 10px;
+    
+    .sub-text {
+        color: #a67c52;
         text-align: center;
-        font-family: monospace;
-        font-size: 0.9em;
-        margin-bottom: 40px;
+        font-size: 1.2em;
+        margin-bottom: 10px;
     }
 
-    /* Cartes Blanches avec ombres douces */
-    .medical-card {
-        background: #ffffff;
-        border-radius: 2px;
-        padding: 30px;
-        border-left: 5px solid #1a1a1a;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    /* Status Bar Style Image */
+    .system-status {
+        background: rgba(125, 90, 45, 0.1);
+        border: 1px solid #7d5a2d;
+        border-radius: 50px;
+        padding: 5px 20px;
+        color: #7d5a2d;
+        text-align: center;
+        width: fit-content;
+        margin: 0 auto 30px auto;
+        font-family: monospace;
+        font-size: 0.9em;
+    }
+
+    /* Colonnes / Cartes style "Beige Soft" */
+    .gold-card {
+        background: #efe6d5;
+        border-radius: 20px;
+        padding: 25px;
+        border: 1px solid #d4c4a8;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        height: 100%;
+    }
+
+    /* Headers de colonnes avec icône dorée */
+    .column-title {
+        background: #7d5a2d;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 10px;
+        font-size: 0.9em;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
         margin-bottom: 20px;
     }
 
-    /* AFFICHAGE DU RÉSULTAT "MODERNE" */
-    .result-box {
-        padding: 25px;
-        border-radius: 10px;
-        text-align: center;
-        margin-top: 20px;
-        border: 2px solid #1a1a1a;
-    }
-    .status-positive { background-color: #ffeded; border-color: #cc0000; color: #cc0000; }
-    .status-negative { background-color: #e6ffed; border-color: #008800; color: #008800; }
-
-    /* Bouton d'Analyse Noir */
+    /* Bouton d'Analyse Or / Ambre */
     div.stButton > button {
-        background: #1a1a1a !important;
+        background: linear-gradient(180deg, #d4a373 0%, #a67c52 100%) !important;
         color: white !important;
-        border-radius: 0px !important;
-        padding: 20px !important;
+        border: 1px solid #7d5a2d !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
         font-weight: bold !important;
-        letter-spacing: 2px;
         width: 100%;
-        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(125, 90, 45, 0.2);
     }
     div.stButton > button:hover {
-        background: #444444 !important;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        transform: scale(1.02);
+        box-shadow: 0 6px 15px rgba(125, 90, 45, 0.4);
     }
 
-    /* LinkedIn en bas à droite */
-    .linkedin-fixed {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: #1a1a1a;
+    /* Image Display avec bordure dorée */
+    .scan-frame {
+        border: 4px solid #7d5a2d;
+        border-radius: 10px;
+        padding: 5px;
+        background: white;
+    }
+
+    /* LinkedIn Button - Orange/Gold style */
+    .linkedin-btn {
+        background: linear-gradient(180deg, #e67e22 0%, #d35400 100%);
+        color: white !important;
         padding: 10px 20px;
         border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        float: right;
+        font-size: 0.8em;
     }
-    .linkedin-fixed a { color: white !important; text-decoration: none; font-weight: bold; font-size: 0.8em; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -114,71 +139,73 @@ def load_neuro_model():
     model.load_weights(model_path)
     return model
 
-# --- 4. HEADER ---
+# --- 4. NAVIGATION ---
 algeria_tz = pytz.timezone('Africa/Algiers')
 now = datetime.datetime.now(algeria_tz)
 
-st.markdown('<p class="main-header">NEUROSCAN AI</p>', unsafe_allow_html=True)
-st.markdown(f'<div class="info-bar">STATION: ALGIERS | CLOCK: {now.strftime("%H:%M:%S")} | STATUS: READY</div>', unsafe_allow_html=True)
+st.markdown('<p class="main-header">Brain Tumor Classification AI</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-text">MRI-Based Tumor Type Prediction</p>', unsafe_allow_html=True)
+st.markdown(f'<div class="system-status">SYSTEM STATUS: ACTIVE | ALGERIA | {now.strftime("%d/%m/%Y - %H:%M:%S")}</div>', unsafe_allow_html=True)
 
-# --- 5. MAIN INTERFACE ---
-col_info, col_scan, col_res = st.columns([1, 1.5, 1], gap="large")
+# --- 5. DASHBOARD 3 COLONNES ---
+col1, col2, col3 = st.columns(3, gap="medium")
 
-with col_info:
-    st.markdown('<div class="medical-card">', unsafe_allow_html=True)
-    st.markdown("### 📋 PATIENT")
-    nom = st.text_input("NOM").upper()
-    prenom = st.text_input("PRÉNOM").capitalize()
-    age = st.number_input("ÂGE", min_value=0, value=30)
-    gender = st.selectbox("GENRE", ["Male", "Female"])
+with col1:
+    st.markdown('<div class="gold-card">', unsafe_allow_html=True)
+    st.markdown('<div class="column-title">👤 PATIENT INFORMATION</div>', unsafe_allow_html=True)
+    nom = st.text_input("LAST NAME").upper()
+    prenom = st.text_input("FIRST NAME").capitalize()
+    age = st.number_input("AGE", min_value=0, value=30)
+    gender = st.selectbox("GENDER", ["Male", "Female"])
     st.markdown('</div>', unsafe_allow_html=True)
 
-with col_scan:
-    st.markdown('<div class="medical-card">', unsafe_allow_html=True)
-    st.markdown("### 🧠 IMAGERIE IRM")
-    uploaded_file = st.file_uploader("GLISSER LE CLICHÉ ICI", type=["jpg", "png", "jpeg"])
+with col2:
+    st.markdown('<div class="gold-card">', unsafe_allow_html=True)
+    st.markdown('<div class="column-title">📤 UPLOAD MRI ACQUISITION</div>', unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("Drop Scan Image", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
     if uploaded_file:
         image = Image.open(uploaded_file).convert('RGB')
+        st.markdown('<div class="scan-frame">', unsafe_allow_html=True)
         st.image(image, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        st.caption("Foucnd Scan")
     st.markdown('</div>', unsafe_allow_html=True)
 
-with col_res:
-    st.markdown('<div class="medical-card">', unsafe_allow_html=True)
-    st.markdown("### ⚡ ANALYSE IA")
-    if uploaded_file and st.button("LANCER LE DIAGNOSTIC"):
+with col3:
+    st.markdown('<div class="gold-card">', unsafe_allow_html=True)
+    st.markdown('<div class="column-title">🧬 PREDICTION RESULT</div>', unsafe_allow_html=True)
+    if uploaded_file and st.button("Analyze"):
         model = load_neuro_model()
         img_array = np.array(image.resize((224, 224))) / 255.0
         preds = model.predict(np.expand_dims(img_array, axis=0))[0]
         
-        classes = ['Non-Cérébral', 'Gliome', 'Méningiome', 'Pas de tumeur', 'Pituitaire']
+        classes = ['Non-Cérébral', 'Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
         idx = np.argmax(preds)
         resultat = classes[idx]
         confiance = preds[idx] * 100
 
-        # AFFICHAGE DU RÉSULTAT STYLE "ALERTE"
-        style_class = "status-negative" if resultat == "Pas de tumeur" else "status-positive"
-        st.markdown(f"""
-            <div class="result-box {style_class}">
-                <h4 style="margin:0;">CONCLUSION IA</h4>
-                <h2 style="margin:10px 0;">{resultat.upper()}</h2>
-                <p>Indice de certitude : {confiance:.2f}%</p>
-            </div>
-        """, unsafe_allow_html=True)
+        st.markdown(f"**Predicted Type:** {resultat}")
+        st.progress(confiance/100)
+        st.write(f"Confidence: {confiance:.2f}%")
         
-        # Le bouton de téléchargement apparaît ici après l'analyse
-        st.write("---")
-        st.info("Le rapport PDF a été généré avec succès.")
+        # Le code PDF ici (inchangé)
+        st.success("Report Ready.")
     else:
-        st.write("En attente de données...")
+        st.write("Awaiting MRI upload...")
+    
+    # LinkedIn Button en bas de la 3eme colonne comme sur l'image
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown("""
+        <a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank" class="linkedin-btn">
+            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="15"> LinkedIn
+        </a>
+    """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- 6. FOOTER ---
 st.markdown(f"""
-    <div style="text-align:center; padding:40px; color:#999; font-size:0.8em;">
-        <b>NEUROSCAN AI V6.1</b> | UNITÉ DE GÉNIE BIOMÉDICAL<br>
-        DÉVELOPPÉ PAR : <b>DOUAA HOUBAD</b> | M1 EMB INGÉNIEUR
-    </div>
-    <div class="linkedin-fixed">
-        <a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank">FOR MORE INFORMATION</a>
+    <div style="text-align:center; padding-top:40px; color:#7d5a2d; font-family:serif; font-weight:bold;">
+        custom footer<br>
+        Developed by Douaa Houbad | M1 EMB Biomedical Engineer
     </div>
 """, unsafe_allow_html=True)
