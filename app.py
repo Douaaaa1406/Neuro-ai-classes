@@ -9,100 +9,97 @@ import gdown
 import pytz
 
 # --- 1. CONFIGURATION ---
-st.set_page_config(page_title="NeuroScan AI | Gold Edition", page_icon="🧠", layout="wide")
+st.set_page_config(page_title="Brain Tumor Classification AI", page_icon="🧠", layout="wide")
 
-# --- 2. DESIGN "GOLDEN LUXURY" (BASÉ SUR TON IMAGE) ---
+# --- 2. DESIGN "ULTRA-LUXURY GOLD" (FIDÈLE À L'IMAGE) ---
 st.markdown("""
 <style>
-    /* Background global avec texture subtile et couleur Champagne */
+    /* Background avec effet de texture et particules */
     [data-testid="stAppViewContainer"] {
-        background: linear-gradient(rgba(245, 238, 220, 0.9), rgba(220, 200, 170, 0.9)), 
-                    url('https://www.transparenttextures.com/patterns/p6.png');
-        background-color: #f5eedc;
+        background: radial-gradient(circle at center, #f5eedc 0%, #d4c4a8 100%);
+        background-image: url("https://www.transparenttextures.com/patterns/dust.png");
     }
 
-    /* En-tête Doré / Bronze */
     .main-header {
-        font-family: 'Times New Roman', serif;
+        font-family: 'Inter', sans-serif;
         color: #7d5a2d;
         font-size: 3.5em;
-        font-weight: bold;
+        font-weight: 800;
         text-align: center;
         margin-bottom: 0px;
     }
     
     .sub-text {
-        color: #a67c52;
+        color: #8b6b43;
         text-align: center;
-        font-size: 1.2em;
-        margin-bottom: 10px;
+        font-size: 1.1em;
+        margin-bottom: 5px;
     }
 
-    /* Status Bar Style Image */
     .system-status {
-        background: rgba(125, 90, 45, 0.1);
+        background: rgba(255, 255, 255, 0.5);
         border: 1px solid #7d5a2d;
         border-radius: 50px;
-        padding: 5px 20px;
+        padding: 5px 25px;
         color: #7d5a2d;
         text-align: center;
         width: fit-content;
         margin: 0 auto 30px auto;
-        font-family: monospace;
-        font-size: 0.9em;
+        font-size: 0.8em;
+        font-weight: bold;
     }
 
-    /* Colonnes / Cartes style "Beige Soft" */
+    /* Cartes Beige Soft */
     .gold-card {
-        background: #efe6d5;
-        border-radius: 20px;
+        background: rgba(239, 230, 213, 0.9);
+        border-radius: 15px;
         padding: 25px;
-        border: 1px solid #d4c4a8;
+        border: 1px solid #c4b596;
         box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         height: 100%;
     }
 
-    /* Headers de colonnes avec icône dorée */
+    /* En-têtes de colonnes */
     .column-title {
-        background: #7d5a2d;
+        background: #8b6b43;
         color: white;
-        padding: 8px 15px;
-        border-radius: 10px;
-        font-size: 0.9em;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 0.85em;
         font-weight: bold;
-        display: flex;
-        align-items: center;
-        gap: 10px;
         margin-bottom: 20px;
+        text-transform: uppercase;
     }
 
-    /* Bouton d'Analyse Or / Ambre */
+    /* Barres de probabilités personnalisées (Comme l'image) */
+    .custom-progress-container {
+        width: 100%;
+        background-color: #d1c4ab;
+        border-radius: 5px;
+        margin: 10px 0;
+        height: 12px;
+    }
+    .custom-progress-fill {
+        height: 100%;
+        border-radius: 5px;
+        background: linear-gradient(90deg, #d4a373, #7d5a2d);
+    }
+
+    /* Bouton Analyze style Image */
     div.stButton > button {
-        background: linear-gradient(180deg, #d4a373 0%, #a67c52 100%) !important;
+        background: linear-gradient(180deg, #d4a373 0%, #8b6b43 100%) !important;
         color: white !important;
         border: 1px solid #7d5a2d !important;
-        padding: 12px !important;
+        padding: 15px !important;
         border-radius: 8px !important;
         font-weight: bold !important;
-        width: 100%;
-        box-shadow: 0 4px 10px rgba(125, 90, 45, 0.2);
-    }
-    div.stButton > button:hover {
-        transform: scale(1.02);
-        box-shadow: 0 6px 15px rgba(125, 90, 45, 0.4);
+        font-size: 1.1em !important;
+        box-shadow: 0 4px 15px rgba(139, 107, 67, 0.3) !important;
     }
 
-    /* Image Display avec bordure dorée */
-    .scan-frame {
-        border: 4px solid #7d5a2d;
-        border-radius: 10px;
-        padding: 5px;
-        background: white;
-    }
-
-    /* LinkedIn Button - Orange/Gold style */
+    /* LinkedIn Button */
     .linkedin-btn {
-        background: linear-gradient(180deg, #e67e22 0%, #d35400 100%);
+        background: linear-gradient(180deg, #0077b5, #005a87);
         color: white !important;
         padding: 10px 20px;
         border-radius: 5px;
@@ -112,7 +109,6 @@ st.markdown("""
         align-items: center;
         gap: 10px;
         float: right;
-        font-size: 0.8em;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -121,11 +117,12 @@ st.markdown("""
 @st.cache_resource
 def load_neuro_model():
     model_path = 'brain_tumor_model_v6_final.keras'
-    file_id = '1QRVvhNHSx7qgw0GIDrRLsuX09uItsXM2' 
-    url = f'https://drive.google.com/uc?id={file_id}'
     if not os.path.exists(model_path):
+        file_id = '1QRVvhNHSx7qgw0GIDrRLsuX09uItsXM2' 
+        url = f'https://drive.google.com/uc?id={file_id}'
         gdown.download(url, model_path, quiet=False)
     
+    # Re-construction de l'architecture pour charger les poids
     base_model = tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights=None)
     model = tf.keras.Sequential([
         base_model,
@@ -147,8 +144,8 @@ st.markdown('<p class="main-header">Brain Tumor Classification AI</p>', unsafe_a
 st.markdown('<p class="sub-text">MRI-Based Tumor Type Prediction</p>', unsafe_allow_html=True)
 st.markdown(f'<div class="system-status">SYSTEM STATUS: ACTIVE | ALGERIA | {now.strftime("%d/%m/%Y - %H:%M:%S")}</div>', unsafe_allow_html=True)
 
-# --- 5. DASHBOARD 3 COLONNES ---
-col1, col2, col3 = st.columns(3, gap="medium")
+# --- 5. INTERFACE ---
+col1, col2, col3 = st.columns(3, gap="large")
 
 with col1:
     st.markdown('<div class="gold-card">', unsafe_allow_html=True)
@@ -162,13 +159,13 @@ with col1:
 with col2:
     st.markdown('<div class="gold-card">', unsafe_allow_html=True)
     st.markdown('<div class="column-title">📤 UPLOAD MRI ACQUISITION</div>', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Drop Scan Image", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+    uploaded_file = st.file_uploader("Upload Scan", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
     if uploaded_file:
         image = Image.open(uploaded_file).convert('RGB')
-        st.markdown('<div class="scan-frame">', unsafe_allow_html=True)
+        st.markdown('<div style="border:3px solid #8b6b43; padding:5px; background:white;">', unsafe_allow_html=True)
         st.image(image, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
-        st.caption("Foucnd Scan")
+        st.caption("<center>Current Scan</center>", unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col3:
@@ -179,33 +176,36 @@ with col3:
         img_array = np.array(image.resize((224, 224))) / 255.0
         preds = model.predict(np.expand_dims(img_array, axis=0))[0]
         
-        classes = ['Non-Cérébral', 'Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
+        classes = ['Non-Brain', 'Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
         idx = np.argmax(preds)
-        resultat = classes[idx]
-        confiance = preds[idx] * 100
-
-        st.markdown(f"**Predicted Type:** {resultat}")
-        st.progress(confiance/100)
-        st.write(f"Confidence: {confiance:.2f}%")
         
-        # Le code PDF ici (inchangé)
-        st.success("Report Ready.")
+        # --- CORRECTION DU BUG PROGRESS BAR ---
+        confiance_val = float(preds[idx]) # Conversion explicite en float Python
+        
+        st.markdown(f"**Predicted Type:** {classes[idx]}")
+        st.markdown(f"**Confidence:** {confiance_val*100:.1f}%")
+        
+        # Barre personnalisée style "Image"
+        st.markdown(f"""
+            <div class="custom-progress-container">
+                <div class="custom-progress-fill" style="width: {confiance_val*100}%;"></div>
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Détails des autres probabilités
+        for i, class_name in enumerate(classes):
+            if i != idx:
+                prob = float(preds[i]) * 100
+                st.write(f"{class_name}: {prob:.1f}%")
     else:
-        st.write("Awaiting MRI upload...")
-    
-    # LinkedIn Button en bas de la 3eme colonne comme sur l'image
+        st.write("Awaiting data...")
+
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("""
         <a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank" class="linkedin-btn">
-            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="15"> LinkedIn
+             For more information
         </a>
     """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- 6. FOOTER ---
-st.markdown(f"""
-    <div style="text-align:center; padding-top:40px; color:#7d5a2d; font-family:serif; font-weight:bold;">
-        custom footer<br>
-        Developed by Douaa Houbad | M1 EMB Biomedical Engineer
-    </div>
-""", unsafe_allow_html=True)
+st.markdown('<p style="text-align:center; padding:20px; color:#8b6b43; font-weight:bold;">custom footer</p>', unsafe_allow_html=True)
