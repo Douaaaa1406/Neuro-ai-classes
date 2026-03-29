@@ -127,7 +127,7 @@ def generate_medical_pdf(nom, prenom, age, gender, resultat, confiance, img, dat
     pdf.set_font("Times", 'B', 12)
     pdf.cell(0, 10, "1. INFORMATIONS PATIENT", 0, 1)
     pdf.set_font("Times", '', 11)
-    data = [["Nom/Prenom", f"{nom} {prenom}"], ["Age/Genre", f"{age}/{gender}"], ["Analyste", "Douaa Houbad (M1 EMB)"], ["Heure", date_str]]
+    data = [["Nom/Prenom", f"{nom} {prenom}"], ["Age/Genre", f"{age}/{gender}"], ["Analyste", "(M1 EMB)"], ["Heure", date_str]]
     for row in data:
         pdf.cell(50, 10, row[0], 1); pdf.cell(100, 10, row[1], 1); pdf.ln()
     pdf.ln(10)
@@ -185,4 +185,4 @@ with col3:
     st.markdown(f'<div style="text-align:right; margin-top:100px;"><a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank" style="color:#800020; font-weight:bold; text-decoration:none;">LinkedIn</a></div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown(f'<p style="text-align:center; color:#374151; font-family:serif; margin-top:20px;">Douaa Houbad | M1 EMB | 2026</p>', unsafe_allow_html=True)
+st.markdown(f'<p style="text-align:center; color:#374151; font-family:serif; margin-top:20px;">Développé par : Bahlouli Fatna Romaisaa & Houbad Douaa| M1 EMB | 2026</p>', unsafe_allow_html=True)
