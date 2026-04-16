@@ -244,7 +244,7 @@ with col3:
         <div style="text-align:right; margin-top:100px;">
             <a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank" 
                style="color:#0056b3; text-decoration:none; font-weight:700; border-bottom: 2px solid #00c853; padding-bottom:3px;">
-               CONSULTER L'EXPERT MÉDICAL ↗
+               CONSULTER LE DEVLOPEUR ↗
             </a>
         </div>
     ''', unsafe_allow_html=True)
