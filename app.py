@@ -12,24 +12,23 @@ import io
 # --- 1. CONFIGURATION ---
 st.set_page_config(page_title="NeuroScan AI | Diagnostic", page_icon="🧠", layout="wide")
 
-# --- 2. DESIGN BIOMÉDICAL PRO (VIF & ARRONDIT) ---
+# --- 2. DESIGN "NEON EMERALD" (BIO-TECH VIF) ---
 st.markdown("""
 <style>
     /* === FONTS === */
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Outfit:wght@400;800&display=swap');
 
-    /* === FOND PRINCIPAL : DEEP MEDICAL BLUE === */
+    /* === FOND : DEEP SLATE (PAS DE MAUVE) === */
     [data-testid="stAppViewContainer"] {
-        background: radial-gradient(circle at top left, #001a2c 0%, #000a12 100%);
-        color: #ffffff;
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: radial-gradient(circle at top right, #002b2b 0%, #000d0d 100%);
+        color: #e0f2f1;
+        font-family: 'Space Grotesk', sans-serif;
     }
 
-    /* === NETTOYAGE DES STRUCTURES RECTANGULAIRES === */
+    /* === SUPPRESSION DES STRUCTURES RIGIDES === */
     [data-testid="column"], [data-testid="stVerticalBlock"], .stColumn > div {
         background-color: transparent !important;
         border: none !important;
-        box-shadow: none !important;
     }
 
     .block-container {
@@ -37,117 +36,106 @@ st.markdown("""
         max-width: 1350px;
     }
 
-    /* === EN-TÊTE ULTRA-MODERNE === */
+    /* === TITRE LUMINEUX (VERT VIF) === */
     .main-header {
         font-family: 'Outfit', sans-serif;
-        background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+        background: linear-gradient(90deg, #00ffa3 0%, #03dac5 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        font-size: 4em;
+        font-size: 4.5em;
         font-weight: 800;
         text-align: center;
-        margin-bottom: 0px;
-        filter: drop-shadow(0 2px 10px rgba(0, 242, 254, 0.3));
+        margin-bottom: -10px;
+        filter: drop-shadow(0 0 15px rgba(0, 255, 163, 0.4));
     }
     
     .sub-text {
-        color: #00d4ff;
+        color: #00ffa3;
         text-align: center;
-        font-size: 1.1em;
-        font-weight: 600;
+        font-size: 1em;
+        font-weight: 500;
         text-transform: uppercase;
-        letter-spacing: 6px;
-        margin-top: 0px;
-        opacity: 0.9;
+        letter-spacing: 8px;
+        opacity: 0.8;
     }
 
-    .live-date {
-        text-align: center;
-        color: rgba(0, 212, 255, 0.6);
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.9em;
-        margin-bottom: 40px;
-    }
-
-    /* === CARTES "BIO-CURVE" (FINI LES RECTANGLES) === */
+    /* === CARTES "ORGANIC" (SANS ANGLES DROITS) === */
     .art-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(15px);
-        border-radius: 40px; /* Arrondi très prononcé */
-        padding: 40px;
-        border: 1px solid rgba(0, 242, 254, 0.15);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        min-height: 550px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(20px);
+        border-radius: 50px; /* Courbure extrême pour éliminer les rectangles */
+        padding: 45px;
+        border: 1px solid rgba(0, 255, 163, 0.2);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        min-height: 560px;
+        transition: all 0.5s ease;
     }
 
     .art-card:hover {
-        transform: translateY(-10px) scale(1.02);
-        border: 1px solid rgba(0, 242, 254, 0.4);
-        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid #00ffa3;
+        box-shadow: 0 0 30px rgba(0, 255, 163, 0.2);
+        transform: scale(1.01);
     }
 
     .column-title {
         font-family: 'Outfit', sans-serif;
-        color: #00f2fe;
-        font-size: 1.6em;
+        color: #00ffa3;
+        font-size: 1.8em;
         font-weight: 700;
         margin-bottom: 30px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        letter-spacing: -0.5px;
     }
 
-    /* === INPUTS & WIDGETS ARRONDIS === */
+    /* === WIDGETS ARRONDIS & VIFS === */
     .stTextInput > div > div > input,
     .stNumberInput > div > div > input,
     .stSelectbox > div > div > select {
-        background: rgba(0, 242, 254, 0.05) !important;
-        border: 1px solid rgba(0, 242, 254, 0.2) !important;
-        border-radius: 20px !important; /* Cercles plutôt que carrés */
+        background: rgba(0, 255, 163, 0.05) !important;
+        border: 1px solid rgba(0, 255, 163, 0.3) !important;
+        border-radius: 25px !important;
         color: #ffffff !important;
-        padding: 12px 20px !important;
+        padding: 15px 25px !important;
     }
 
-    /* === BOUTON VIF (CYAN) === */
+    /* === BOUTON D'ACTION "NEON" === */
     div.stButton > button {
-        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%) !important;
-        color: #001a2c !important;
-        border-radius: 30px !important;
-        font-weight: 700 !important;
-        font-size: 1.1em !important;
-        height: 60px;
+        background: #00ffa3 !important;
+        color: #001a1a !important;
+        border-radius: 50px !important;
+        font-weight: 800 !important;
+        font-size: 1.2em !important;
+        height: 65px;
         border: none !important;
-        box-shadow: 0 10px 20px rgba(0, 242, 254, 0.3);
-        transition: all 0.3s ease !important;
+        box-shadow: 0 0 20px rgba(0, 255, 163, 0.4);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        text-transform: uppercase;
     }
 
     div.stButton > button:hover {
-        box-shadow: 0 15px 30px rgba(0, 242, 254, 0.5);
-        transform: scale(1.05);
+        background: #ffffff !important;
+        box-shadow: 0 0 40px rgba(0, 255, 163, 0.7);
+        transform: translateY(-3px);
     }
 
-    /* === RÉSULTATS DIAGNOSTIC === */
+    /* === ZONE RÉSULTAT === */
     .diagnostic-result {
-        background: linear-gradient(135deg, rgba(0, 242, 254, 0.1), rgba(79, 172, 254, 0.1));
-        border-radius: 25px;
-        padding: 25px;
-        border: 1px solid #00f2fe;
-        margin-top: 20px;
+        background: rgba(0, 255, 163, 0.1);
+        border-radius: 35px;
+        padding: 30px;
+        border: 2px dashed #00ffa3;
         text-align: center;
+        margin-top: 20px;
     }
 
-    /* === FOOTER === */
-    .footer-text {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.5);
-        margin-top: 50px;
-        font-size: 0.85em;
+    /* === FILE UPLOADER STYLE === */
+    [data-testid="stFileUploader"] {
+        border-radius: 35px;
+        background: rgba(255, 255, 255, 0.02);
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. LOGIQUE TECHNIQUE (INCHANGÉE) ---
+# --- 3. LOGIQUE TECHNIQUE (STABLE) ---
 @st.cache_resource
 def load_neuro_model():
     model_path = 'brain_tumor_model_v6_final.keras'
@@ -170,63 +158,67 @@ def load_neuro_model():
 def generate_medical_pdf(nom, prenom, age, gender, resultat, confiance, img, date_str):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", 'B', 20)
-    pdf.set_text_color(0, 80, 120)
-    pdf.cell(0, 20, "RAPPORT CLINIQUE - NEUROSCAN AI", 0, 1, 'C')
+    pdf.set_font("Arial", 'B', 22)
+    pdf.set_text_color(0, 100, 80)
+    pdf.cell(0, 25, "ANALYSIS REPORT - NEUROSCAN", 0, 1, 'C')
     pdf.ln(10)
-    pdf.set_font("Arial", 'B', 12)
-    pdf.set_text_color(0, 0, 0)
-    pdf.cell(0, 10, f"Date : {date_str}", 0, 1, 'R')
-    pdf.ln(5)
-    pdf.cell(0, 10, "1. INFORMATIONS PATIENT", 0, 1)
     pdf.set_font("Arial", '', 11)
-    data = [["Nom/Prenom", f"{nom} {prenom}"], ["Age/Genre", f"{age}/{gender}"], ["Statut", "Analyse IA terminée"]]
-    for row in data:
-        pdf.cell(50, 10, row[0], 1); pdf.cell(100, 10, row[1], 1); pdf.ln()
+    pdf.set_text_color(50, 50, 50)
+    pdf.cell(0, 10, f"Issued on: {date_str}", 0, 1, 'R')
+    pdf.ln(5)
+    
+    pdf.set_font("Arial", 'B', 13)
+    pdf.cell(0, 10, "PATIENT BIODATA", 0, 1)
+    pdf.set_font("Arial", '', 11)
+    for k, v in [["Full Name", f"{nom} {prenom}"], ["Age / Gender", f"{age} / {gender}"], ["System", "NeuroScan AI V2"]]:
+        pdf.cell(50, 10, k, 1); pdf.cell(100, 10, v, 1); pdf.ln()
+    
     pdf.ln(10)
-    img.save("temp.png")
-    pdf.image("temp.png", x=65, w=80)
+    img.save("temp_scan.png")
+    pdf.image("temp_scan.png", x=60, w=90)
     pdf.ln(10)
-    pdf.set_font("Arial", 'B', 15); pdf.set_fill_color(230, 245, 255)
-    pdf.cell(0, 15, f"RESULTAT : {resultat.upper()} ({confiance:.1f}%)", 1, 1, 'C', True)
+    
+    pdf.set_fill_color(0, 255, 163)
+    pdf.set_font("Arial", 'B', 16)
+    pdf.cell(0, 20, f"DIAGNOSIS: {resultat.upper()}", 1, 1, 'C', False)
     return pdf.output(dest='S').encode('latin-1')
 
-# --- 4. INTERFACE UTILISATEUR ---
+# --- 4. INTERFACE ---
 algeria_tz = pytz.timezone('Africa/Algiers')
-date_str = datetime.datetime.now(algeria_tz).strftime("%d/%m/%Y | %H:%M:%S")
+date_str = datetime.datetime.now(algeria_tz).strftime("%d/%m/%Y | %H:%M")
 
-st.markdown('<p class="main-header">NEUROSCAN AI</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-text">Biomedical Intelligence</p>', unsafe_allow_html=True)
-st.markdown(f'<p class="live-date">SYSTEM READY • {date_str}</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-header">NEUROSCAN</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-text">Advanced Neural Imaging</p>', unsafe_allow_html=True)
+st.markdown(f'<div style="text-align:center; opacity:0.6; margin-bottom:40px;">{date_str}</div>', unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns(3, gap="medium")
+col1, col2, col3 = st.columns(3, gap="large")
 
 with col1:
     st.markdown('<div class="art-card">', unsafe_allow_html=True)
-    st.markdown('<div class="column-title">👤 Patient</div>', unsafe_allow_html=True)
-    nom = st.text_input("NOM", key="nom").upper()
-    prenom = st.text_input("PRÉNOM", key="prenom").capitalize()
-    age = st.number_input("ÂGE", min_value=0, max_value=120, value=30)
-    gender = st.selectbox("GENRE", ["Masculin", "Féminin"])
+    st.markdown('<div class="column-title">01. Patient</div>', unsafe_allow_html=True)
+    nom = st.text_input("NOM", value="DOE").upper()
+    prenom = st.text_input("PRÉNOM", value="John").capitalize()
+    age = st.number_input("ÂGE", 0, 120, 45)
+    gender = st.selectbox("GENRE", ["Masculin", "Féminin", "Autre"])
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
     st.markdown('<div class="art-card">', unsafe_allow_html=True)
-    st.markdown('<div class="column-title">🔬 Imagerie IRM</div>', unsafe_allow_html=True)
-    up = st.file_uploader("Upload Scan", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+    st.markdown('<div class="column-title">02. MRI Data</div>', unsafe_allow_html=True)
+    up = st.file_uploader("MRI", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
     if up:
         image = Image.open(up).convert('RGB')
         st.image(image, use_container_width=True)
     else:
-        st.info("Sélectionnez une image IRM")
+        st.info("Upload MRI Scan to Begin")
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col3:
     st.markdown('<div class="art-card">', unsafe_allow_html=True)
-    st.markdown('<div class="column-title">⚕️ Analyse IA</div>', unsafe_allow_html=True)
+    st.markdown('<div class="column-title">03. AI Insights</div>', unsafe_allow_html=True)
     
-    if up and st.button("DÉMARRER LE SCAN", key="analyze"):
-        with st.spinner("Analyse neuronale..."):
+    if up and st.button("RUN DIAGNOSTIC"):
+        with st.spinner("Processing..."):
             model = load_neuro_model()
             img_array = np.array(image.resize((224, 224))) / 255.0
             preds = model.predict(np.expand_dims(img_array, axis=0))[0]
@@ -235,22 +227,24 @@ with col3:
             
             st.markdown(f'''
                 <div class="diagnostic-result">
-                    <h2 style="color:#00f2fe;margin:0;">{res}</h2>
-                    <p style="color:white;opacity:0.8;">Indice de confiance : {conf:.2f}%</p>
+                    <h2 style="color:#00ffa3; margin:0; font-size:2em;">{res}</h2>
+                    <p style="color:white; margin:0; opacity:0.7;">Confidence: {conf:.2f}%</p>
                 </div>
             ''', unsafe_allow_html=True)
             
-            pdf = generate_medical_pdf(nom, prenom, age, gender, res, conf, image, date_str)
-            st.download_button("📥 GÉNÉRER LE RAPPORT", pdf, f"Neuro_{nom}.pdf", "application/pdf")
+            pdf_data = generate_medical_pdf(nom, prenom, age, gender, res, conf, image, date_str)
+            st.download_button("📥 DOWNLOAD REPORT", pdf_data, f"NeuroScan_{nom}.pdf", "application/pdf")
     else:
-        st.info("Système en attente de données...")
+        st.info("Awaiting Input Data")
     
     st.markdown(f'''
-        <div style="text-align:right; margin-top:80px;">
+        <div style="text-align:right; margin-top:100px;">
             <a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank" 
-               style="color:#00f2fe; text-decoration:none; font-weight:600;">Expertise LinkedIn ↗</a>
+               style="color:#00ffa3; text-decoration:none; font-weight:700; font-size:1.1em;">
+               VIEW SCIENTIFIC PROFILE ↗
+            </a>
         </div>
     ''', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown(f'<p class="footer-text">NeuroScan v2.0 | Algiers High-Tech | 2026</p>', unsafe_allow_html=True)
+st.markdown('<p style="text-align:center; margin-top:50px; opacity:0.4;">NeuroScan AI • Biomedical Innovation • 2026</p>', unsafe_allow_html=True)
