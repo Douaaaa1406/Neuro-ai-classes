@@ -10,114 +10,138 @@ import pytz
 import io
 
 # --- 1. CONFIGURATION ---
-st.set_page_config(page_title="NeuroScan AI", page_icon="🧠", layout="wide")
+st.set_page_config(page_title="NeuroScan AI | Pro", page_icon="🧠", layout="wide")
 
-# --- 2. DESIGN "FLUID & BORDERLESS" (MODE CLAIR) ---
+# --- 2. DESIGN "CYBER-BIOMEDICAL" (NOIR, VERT VIF, BLEU) ---
 st.markdown("""
 <style>
     /* === FONTS === */
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;800&family=Space+Grotesk:wght@300;500;700&display=swap');
 
-    /* === FOND TOTALEMENT PROPRE === */
+    /* === FOND NOIR PROFOND === */
     [data-testid="stAppViewContainer"] {
-        background-color: #ffffff;
-        color: #1a202c;
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #000000;
+        color: #ffffff;
+        font-family: 'Space Grotesk', sans-serif;
     }
 
-    /* === ÉLIMINATION TOTALE DES RECTANGLES ET BORDURES === */
-    [data-testid="column"], [data-testid="stVerticalBlock"], .stColumn > div, div[data-testid="stExpander"] {
+    /* === SUPPRESSION TOTALE DES RECTANGLES === */
+    [data-testid="column"], [data-testid="stVerticalBlock"], .stColumn > div {
         background-color: transparent !important;
         border: none !important;
         box-shadow: none !important;
     }
 
-    /* Suppression des bordures par défaut de Streamlit */
-    .stApp div[data-baseweb="card"] {
-        border: none !important;
-    }
-
     .block-container {
-        padding-top: 2rem !important;
-        max-width: 1200px;
+        padding-top: 1.5rem !important;
+        max-width: 1300px;
     }
 
-    /* === TITRE FLOTTANT VIF === */
+    /* === TITRE EN GRADIENT BLEU & VERT === */
     .main-header {
-        background: linear-gradient(90deg, #0061ff 0%, #60efff 100%);
+        font-family: 'Outfit', sans-serif;
+        background: linear-gradient(90deg, #00d4ff 0%, #00ff87 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        font-size: 4em;
+        font-size: 4.5em;
         font-weight: 800;
         text-align: center;
-        margin-bottom: 5px;
+        margin-bottom: 0px;
+        filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
     }
     
     .sub-text {
-        color: #0061ff;
+        color: #00ff87;
         text-align: center;
-        font-size: 1em;
+        font-size: 1.1em;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 5px;
-        margin-bottom: 40px;
+        letter-spacing: 7px;
+        margin-top: 0px;
+        opacity: 0.9;
     }
 
-    /* === TITRES DE SECTIONS SANS BOITES === */
+    /* === TITRES DE SECTIONS (STYLE NÉON) === */
     .section-title {
-        color: #0061ff;
-        font-size: 1.5em;
+        color: #00d4ff;
+        font-size: 1.6em;
         font-weight: 700;
-        margin-bottom: 20px;
-        border-left: 5px solid #00d4ff;
-        padding-left: 15px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    /* === INPUTS STYLE "PILULE" (EXTRÊMEMENT ARRONDIS) === */
+    /* === INPUTS "PILULE" (SANS ANGLES DROITS) === */
+    .stTextInput label, .stNumberInput label, .stSelectbox label {
+        color: #ffffff !important;
+        font-weight: 500 !important;
+        margin-left: 15px;
+    }
+
     .stTextInput div div input, 
     .stNumberInput div div input, 
     .stSelectbox div div select {
-        background-color: #f0f7ff !important;
-        border: 1px solid #cce5ff !important;
-        border-radius: 50px !important; /* Forme de pilule, pas de rectangle */
-        padding: 10px 25px !important;
-        color: #1a202c !important;
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(0, 212, 255, 0.3) !important;
+        border-radius: 50px !important; /* Forme pilule */
+        color: #ffffff !important;
+        padding: 12px 25px !important;
     }
 
-    /* === BOUTON D'ACTION VIF === */
+    .stTextInput div div input:focus {
+        border-color: #00ff87 !important;
+        box-shadow: 0 0 15px rgba(0, 255, 135, 0.2) !important;
+    }
+
+    /* === BOUTON VERT VIF (CYBER ACTION) === */
     div.stButton > button {
-        background: linear-gradient(135deg, #0061ff 0%, #00d4ff 100%) !important;
-        color: white !important;
+        background: linear-gradient(135deg, #00ff87 0%, #00d4ff 100%) !important;
+        color: #000000 !important;
         border-radius: 50px !important;
-        font-weight: 700 !important;
-        height: 55px;
+        font-weight: 800 !important;
+        font-size: 1.2em !important;
+        height: 65px;
         width: 100%;
         border: none !important;
-        box-shadow: 0 10px 20px rgba(0, 97, 255, 0.2);
-        transition: all 0.3s ease;
+        box-shadow: 0 0 25px rgba(0, 255, 135, 0.4);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        text-transform: uppercase;
     }
 
     div.stButton > button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 30px rgba(0, 97, 255, 0.3);
+        transform: scale(1.03);
+        box-shadow: 0 0 40px rgba(0, 255, 135, 0.6);
+        background: #ffffff !important;
     }
 
-    /* === RÉSULTAT FLOTTANT === */
-    .res-box {
-        background: #e6fffa;
-        color: #2c7a7b;
-        padding: 20px;
-        border-radius: 30px;
+    /* === ZONE RÉSULTAT (VERT NÉON) === */
+    .res-card {
+        background: rgba(0, 255, 135, 0.1);
+        border: 2px solid #00ff87;
+        border-radius: 40px;
+        padding: 30px;
         text-align: center;
-        font-weight: 800;
-        font-size: 1.4em;
-        border: 2px solid #38b2ac;
         margin-top: 20px;
+        animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+        from { box-shadow: 0 0 10px rgba(0, 255, 135, 0.2); }
+        to { box-shadow: 0 0 25px rgba(0, 255, 135, 0.4); }
+    }
+
+    /* === FOOTER === */
+    .footer {
+        text-align: center;
+        margin-top: 80px;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.85em;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. LOGIQUE TECHNIQUE ---
+# --- 3. LOGIQUE TECHNIQUE (TF & PDF) ---
 @st.cache_resource
 def load_neuro_model():
     model_path = 'brain_tumor_model_v6_final.keras'
@@ -139,60 +163,80 @@ def load_neuro_model():
 def generate_medical_pdf(nom, prenom, age, gender, resultat, confiance, img, date_str):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", 'B', 20)
-    pdf.set_text_color(0, 97, 255)
-    pdf.cell(0, 20, "RAPPORT D'ANALYSE NEUROSCAN", 0, 1, 'C')
-    pdf.set_text_color(0, 0, 0)
+    pdf.set_fill_color(0, 0, 0)
+    pdf.rect(0, 0, 210, 297, 'F') # Fond noir pour le PDF pro
+    pdf.set_font("Arial", 'B', 24)
+    pdf.set_text_color(0, 212, 255)
+    pdf.cell(0, 30, "NEUROSCAN AI - REPORT", 0, 1, 'C')
+    pdf.set_text_color(255, 255, 255)
     pdf.set_font("Arial", '', 12)
+    pdf.cell(0, 10, f"Date: {date_str}", 0, 1, 'R')
     pdf.ln(10)
-    pdf.cell(0, 10, f"Patient : {nom} {prenom} | Age : {age} | Sexe : {gender}", 0, 1)
-    pdf.cell(0, 10, f"Résultat : {resultat} (Confiance : {confiance:.2f}%)", 0, 1)
+    pdf.cell(0, 10, f"Patient: {nom} {prenom} | Age: {age} | Genre: {gender}", 0, 1)
     pdf.ln(10)
-    img.save("temp.png")
-    pdf.image("temp.png", x=60, w=90)
+    img.save("temp_scan.png")
+    pdf.image("temp_scan.png", x=55, w=100)
+    pdf.ln(15)
+    pdf.set_font("Arial", 'B', 18)
+    pdf.set_text_color(0, 255, 135)
+    pdf.cell(0, 20, f"RESULT: {resultat.upper()}", 1, 1, 'C')
     return pdf.output(dest='S').encode('latin-1')
 
-# --- 4. INTERFACE UTILISATEUR ---
+# --- 4. INTERFACE ---
 algeria_tz = pytz.timezone('Africa/Algiers')
-date_now = datetime.datetime.now(algeria_tz).strftime("%d/%m/%Y - %H:%M")
+date_str = datetime.datetime.now(algeria_tz).strftime("%d/%m/%Y | %H:%M")
 
-st.markdown('<p class="main-header">NeuroScan AI</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-text">Biomedical Engineering System</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-header">NEUROSCAN AI</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-text">Cerebral Diagnostic System</p>', unsafe_allow_html=True)
 
-# Division en colonnes sans aucun cadre (les colonnes servent juste au placement)
 col1, col2, col3 = st.columns(3, gap="large")
 
 with col1:
-    st.markdown('<p class="section-title">Informations</p>', unsafe_allow_html=True)
-    nom = st.text_input("NOM").upper()
-    prenom = st.text_input("PRÉNOM").capitalize()
-    age = st.number_input("ÂGE", 0, 120, 25)
-    gender = st.selectbox("GENRE", ["Masculin", "Féminin"])
+    st.markdown('<p class="section-title">🔵 Identification</p>', unsafe_allow_html=True)
+    nom = st.text_input("NOM DU PATIENT").upper()
+    prenom = st.text_input("PRÉNOM DU PATIENT").capitalize()
+    age = st.number_input("ÂGE", 0, 120, 30)
+    gender = st.selectbox("GENRE", ["Masculin", "Féminin", "Autre"])
 
 with col2:
-    st.markdown('<p class="section-title">Visualisation</p>', unsafe_allow_html=True)
-    up = st.file_uploader("Upload", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+    st.markdown('<p class="section-title">🟢 Acquisition IRM</p>', unsafe_allow_html=True)
+    up = st.file_uploader("Scan", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
     if up:
         image = Image.open(up).convert('RGB')
         st.image(image, use_container_width=True)
     else:
-        st.info("Attente du scan IRM...")
+        st.info("Système en attente de flux IRM...")
 
 with col3:
-    st.markdown('<p class="section-title">Analyse</p>', unsafe_allow_html=True)
-    if up and st.button("LANCER LE DIAGNOSTIC"):
-        with st.spinner("Analyse en cours..."):
+    st.markdown('<p class="section-title">⚡ Analyse IA</p>', unsafe_allow_html=True)
+    if up and st.button("Lancer le Scan"):
+        with st.spinner("Analyse neuronale..."):
             model = load_neuro_model()
             img_array = np.array(image.resize((224, 224))) / 255.0
             preds = model.predict(np.expand_dims(img_array, axis=0))[0]
             classes = ['Non-Cérébral', 'Gliome', 'Méningiome', 'Pas de Tumeur', 'Pituitaire']
             res, conf = classes[np.argmax(preds)], float(np.max(preds)) * 100
             
-            st.markdown(f'<div class="res-box">{res}<br><span style="font-size:0.6em; opacity:0.8;">Confiance: {conf:.2f}%</span></div>', unsafe_allow_html=True)
+            st.markdown(f'''
+                <div class="res-card">
+                    <div style="color:#00ff87; font-size:1.8em; font-weight:800;">{res}</div>
+                    <div style="color:#ffffff; opacity:0.7; font-size:0.9em;">Indice de confiance : {conf:.2f}%</div>
+                </div>
+            ''', unsafe_allow_html=True)
             
-            pdf_data = generate_medical_pdf(nom, prenom, age, gender, res, conf, image, date_now)
-            st.download_button("📥 TÉLÉCHARGER RAPPORT", pdf_data, f"Neuro_{nom}.pdf", "application/pdf")
+            pdf_data = generate_medical_pdf(nom, prenom, age, gender, res, conf, image, date_str)
+            st.download_button("📥 GÉNÉRER LE RAPPORT PDF", pdf_data, f"NeuroScan_{nom}.pdf", "application/pdf")
     else:
-        st.write("Prêt pour l'analyse.")
+        st.write("Prêt pour l'acquisition.")
 
-st.markdown(f'<div style="text-align:center; margin-top:100px; color:#a0aec0; font-size:0.8em;">{date_now} | Développé par Douaa & Romaisaa</div>', unsafe_allow_html=True)
+    # Lien LinkedIn stylisé
+    st.markdown(f'''
+        <div style="text-align:right; margin-top:100px;">
+            <a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank" 
+               style="color:#00d4ff; text-decoration:none; font-weight:700; border-bottom: 2px solid #00ff87;">
+               CONSULTER L'EXPERT ↗
+            </a>
+        </div>
+    ''', unsafe_allow_html=True)
+
+st.markdown(f'<p class="footer">NeuroScan Engine v2.5 | Houbad Douaa & Bahlouli Fatna Romaisaa | {date_str}</p>', unsafe_allow_html=True)
