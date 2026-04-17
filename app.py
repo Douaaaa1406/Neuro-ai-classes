@@ -12,19 +12,19 @@ import io
 # --- 1. CONFIGURATION ---
 st.set_page_config(page_title="NeuroScan AI | Diagnostic", page_icon="🧠", layout="wide")
 
-# --- 2. DESIGN CYBER-BIOMÉDICAL (NOIR, VERT, BLEU) ---
+# --- 2. DESIGN CLINIQUE & BIO-TECH (BEIGE MEDICAL, VERT, BLEU) ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Space+Grotesk:wght@300;500;700&display=swap');
 
-    /* === FOND PRINCIPAL : NOIR PROFOND === */
+    /* === FOND PRINCIPAL : BEIGE CLINIQUE DONS === */
     [data-testid="stAppViewContainer"] {
-        background-color: #000000;
-        color: #ffffff;
+        background-color: #FAF0E6; /* Couleur Linen / Beige clair médical */
+        color: #001a2c; /* Texte sombre pour contraste */
         font-family: 'Space Grotesk', sans-serif;
     }
 
-    /* === SUPPRESSION DES BOITES ET RECTANGLES INUTILES === */
+    /* === SUPPRESSION DES STRUCTURES RECTANGULAIRES === */
     [data-testid="column"], [data-testid="stVerticalBlock"], .stColumn > div {
         background-color: transparent !important;
         border: none !important;
@@ -36,21 +36,21 @@ st.markdown("""
         max-width: 1350px;
     }
 
-    /* === EN-TÊTE EN GRADIENT VIF === */
+    /* === EN-TÊTE EN GRADIENT VIF (BLEU & TEAL/VERT) === */
     .main-header {
         font-family: 'Outfit', sans-serif;
-        background: linear-gradient(90deg, #00d4ff 0%, #00ff87 100%);
+        background: linear-gradient(90deg, #0056b3 0%, #00AFA3 100%); /* Bleu Médical vers Teal/Vert */
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-size: 4em;
         font-weight: 800;
         text-align: center;
         margin-bottom: 0px;
-        filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.4));
+        filter: drop-shadow(0 2px 5px rgba(0, 86, 179, 0.2));
     }
     
     .sub-text {
-        color: #00ff87;
+        color: #007BFF; /* Bleu Azure médical */
         text-align: center;
         font-size: 1em;
         font-weight: 600;
@@ -59,81 +59,83 @@ st.markdown("""
         margin-top: 0px;
     }
 
-    /* === TITRES DE SECTIONS === */
+    /* === TITRES DE SECTIONS (BLEU) === */
     .section-title {
-        color: #00d4ff;
+        color: #0056b3; /* Bleu Médical sombre */
         font-size: 1.5em;
         font-weight: 700;
         margin-bottom: 20px;
-        border-left: 4px solid #00ff87;
+        border-left: 4px solid #00c853; /* Accent Vert vif */
         padding-left: 15px;
     }
 
-    /* === CORRECTION CRITIQUE : LISIBILITÉ DES CARREAUX === */
-    /* On force un fond clair et un texte sombre pour que ce soit lisible à 100% */
+    /* === LISIBILITÉ TOTALE DES CARREAUX (INPUTS SUR FOND CLAIR) === */
+    /* Fond blanc pur avec bordure douce pour un look clinique propre */
     .stTextInput div div input, 
     .stNumberInput div div input, 
     .stSelectbox div div select {
-        background-color: #ffffff !important; /* Fond Blanc */
-        color: #001d3d !important; /* Texte Bleu Nuit très foncé */
-        border: 2px solid #00d4ff !important;
+        background-color: #ffffff !important; /* Fond Blanc pur */
+        color: #001d3d !important; /* Texte Bleu Nuit très foncé - PARFAITEMENT LISIBLE */
+        border: 2px solid #e0e0e0 !important; /* Bordure grise douce contre le beige */
         border-radius: 15px !important;
         padding: 10px 20px !important;
         font-weight: 600 !important;
     }
 
     .stTextInput div div input:focus {
-        border-color: #00ff87 !important;
-        box-shadow: 0 0 10px rgba(0, 255, 135, 0.5) !important;
+        border-color: #00c853 !important; /* Focus Vert vif */
+        box-shadow: 0 0 10px rgba(0, 200, 83, 0.1) !important;
     }
 
+    /* Labels sombres sur fond clair */
     .stTextInput label, .stNumberInput label, .stSelectbox label {
-        color: #ffffff !important;
+        color: #001a2c !important; /* Bleu Nuit labels */
         font-weight: 500 !important;
         margin-bottom: 8px !important;
     }
 
-    /* === BOUTON DE DIAGNOSTIC VIF === */
+    /* === BOUTON DE DIAGNOSTIC VIF (VERT ACTION) === */
     div.stButton > button {
-        background: linear-gradient(135deg, #00ff87 0%, #00d4ff 100%) !important;
-        color: #000000 !important;
+        background: linear-gradient(135deg, #00c853 0%, #00e676 100%) !important; /* Vert vif action médical */
+        color: #ffffff !important; /* Texte blanc pour contraste sur vert */
         border-radius: 50px !important;
         font-weight: 800 !important;
         font-size: 1.1em !important;
         height: 55px;
         width: 100%;
         border: none !important;
-        box-shadow: 0 5px 20px rgba(0, 255, 135, 0.3);
+        box-shadow: 0 5px 15px rgba(0, 200, 83, 0.2);
         transition: all 0.3s ease;
+        text-transform: uppercase;
     }
 
     div.stButton > button:hover {
         transform: scale(1.02);
-        box-shadow: 0 8px 30px rgba(0, 255, 135, 0.5);
-        background: #ffffff !important;
+        box-shadow: 0 8px 25px rgba(0, 200, 83, 0.4);
+        background: linear-gradient(135deg, #00e676 0%, #00c853 100%) !important;
     }
 
-    /* === ZONE RÉSULTAT NÉON === */
+    /* === ZONE RÉSULTAT DOUCE (TEAL/VERT) === */
     .res-card {
-        background: rgba(0, 255, 135, 0.1);
-        border: 2px solid #00ff87;
+        background: #E0F2F1; /* Teal très clair clinique */
+        border: 2px solid #00c853; /* Bordure Vert vif */
         border-radius: 30px;
         padding: 25px;
         text-align: center;
         margin-top: 20px;
     }
 
-    /* === FOOTER === */
+    /* === FOOTER SOMBRE === */
     .footer-text {
         text-align: center;
-        color: rgba(255, 255, 255, 0.4);
+        color: rgba(0, 0, 0, 0.5); /* Noir semi-transparent */
         margin-top: 50px;
         font-size: 0.85em;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. LOGIQUE TECHNIQUE (MODÈLE & PDF) ---
+# --- 3. LOGIQUE TECHNIQUE (MODÈLE & PDF) - INCHANGÉE ---
 @st.cache_resource
 def load_neuro_model():
     model_path = 'brain_tumor_model_v6_final.keras'
@@ -156,9 +158,9 @@ def load_neuro_model():
 def generate_medical_pdf(nom, prenom, age, gender, resultat, confiance, img, date_str):
     pdf = FPDF()
     pdf.add_page()
-    # Design du PDF plus sobre pour l'impression médicale
+    # Le design du PDF reste sur fond blanc pour impression professionnelle
     pdf.set_font("Arial", 'B', 22)
-    pdf.set_text_color(0, 50, 150)
+    pdf.set_text_color(0, 50, 150) # Bleu médical professionnel
     pdf.cell(0, 25, "RAPPORT CLINIQUE - NEUROSCAN AI", 0, 1, 'C')
     
     pdf.set_font("Arial", '', 10)
@@ -187,56 +189,65 @@ def generate_medical_pdf(nom, prenom, age, gender, resultat, confiance, img, dat
 algeria_tz = pytz.timezone('Africa/Algiers')
 date_str = datetime.datetime.now(algeria_tz).strftime("%d/%m/%Y | %H:%M")
 
-st.markdown('<p class="main-header">NEUROSCAN AI</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-text">Plateforme de Diagnostic Cérébral</p>', unsafe_allow_html=True)
+# Header avec icône
+st.markdown('<p class="main-header">🧠 NeuroScan AI</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-text">Plateforme de Diagnostic Cérébral Clinique</p>', unsafe_allow_html=True)
 
+# Structure en colonnes (Zéro Rectangle visible)
 col1, col2, col3 = st.columns(3, gap="large")
 
 with col1:
     st.markdown('<p class="section-title">👤 Patient</p>', unsafe_allow_html=True)
-    nom = st.text_input("NOM DE FAMILLE").upper()
-    prenom = st.text_input("PRÉNOM").capitalize()
+    nom = st.text_input("NOM DE FAMILLE", placeholder="Ex: DOE").upper()
+    prenom = st.text_input("PRÉNOM", placeholder="Ex: John").capitalize()
     age = st.number_input("ÂGE", 0, 120, 25)
-    gender = st.selectbox("GENRE", ["Masculin", "Féminin"])
+    gender = st.selectbox("GENRE", ["Masculin", "Féminin", "Autre"])
 
 with col2:
     st.markdown('<p class="section-title">🔬 Acquisition IRM</p>', unsafe_allow_html=True)
     up = st.file_uploader("Upload", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
     if up:
         image = Image.open(up).convert('RGB')
-        st.image(image, use_container_width=True)
+        # Cadre d'image arrondi doux
+        st.image(image, use_container_width=True, caption="Scan chargé avec succès")
     else:
-        st.info("Attente du fichier IRM...")
+        st.info("Veuillez charger un fichier IRM pour analyse.")
 
 with col3:
     st.markdown('<p class="section-title">⚡ Analyse IA</p>', unsafe_allow_html=True)
     if up and st.button("LANCER LE DIAGNOSTIC"):
-        with st.spinner("Analyse des tissus..."):
+        with st.spinner("Analyse des tissus neuronaux..."):
             model = load_neuro_model()
             img_array = np.array(image.resize((224, 224))) / 255.0
             preds = model.predict(np.expand_dims(img_array, axis=0))[0]
             classes = ['Non-Cérébral', 'Gliome', 'Méningiome', 'Pas de Tumeur', 'Pituitaire']
             res, conf = classes[np.argmax(preds)], float(np.max(preds)) * 100
             
+            # Zone résultat Teal/Vert Clinique douée d'une ombre douce
             st.markdown(f'''
                 <div class="res-card">
-                    <h2 style="color:#00ff87; margin:0;">{res}</h2>
-                    <p style="color:white; opacity:0.8; font-size:0.9em;">Confiance : {conf:.2f}%</p>
+                    <p style="color:#0056b3; margin:0; font-weight:600;">CONCLUSION DÉTECTÉE</p>
+                    <h2 style="color:#00c853; margin:0; font-size:2em; font-weight:800;">{res}</h2>
+                    <p style="color:#001a2c; opacity:0.8; font-size:0.9em; margin-top:5px;">Confidence : {conf:.2f}%</p>
                 </div>
             ''', unsafe_allow_html=True)
             
+            # PDF Generation et Download Button
             pdf_bytes = generate_medical_pdf(nom, prenom, age, gender, res, conf, image, date_str)
-            st.download_button("📥 TÉLÉCHARGER LE RAPPORT PDF", pdf_bytes, f"NeuroScan_{nom}.pdf", "application/pdf")
+            st.download_button("📥 TÉLÉCHARGER LE RAPPORT CLINIQUE PDF", pdf_bytes, f"NeuroScan_{nom}.pdf", "application/pdf")
+            st.success("Analyse terminée. Rapport prêt.")
     else:
-        st.write("Prêt pour l'acquisition.")
+        st.write("Le système est prêt pour l'acquisition des données.")
 
+    # Lien LinkedIn stylisé
     st.markdown(f'''
         <div style="text-align:right; margin-top:100px;">
             <a href="https://www.linkedin.com/in/douaa-houbad-006b6a305" target="_blank" 
-               style="color:#00d4ff; text-decoration:none; font-weight:700; border-bottom: 2px solid #00ff87;">
-               CONSULTER L'EXPERT ↗
+               style="color:#0056b3; text-decoration:none; font-weight:700; border-bottom: 2px solid #00c853; padding-bottom:3px;">
+               CONSULTER LE DEVLOPEUR ↗
             </a>
         </div>
     ''', unsafe_allow_html=True)
 
-st.markdown(f'<p class="footer-text">NeuroScan v2.6 | Bahlouli Fatna Romaisaa & Houbad Douaa | M1 EMB | {date_str}</p>', unsafe_allow_html=True)
+# Footer sombre contrasté sur beige
+st.markdown(f'<p class="footer-text">NeuroScan v2.6 | Biomedical Engineering | Bahlouli Fatna Romaisaa & Houbad Douaa | M1 EMB | Algeria  • {date_str}</p>', unsafe_allow_html=True)
