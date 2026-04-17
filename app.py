@@ -250,4 +250,4 @@ with col3:
     ''', unsafe_allow_html=True)
 
 # Footer sombre contrasté sur beige
-st.markdown(f'<p class="footer-text">NeuroScan v2.6 | Biomedical Engineering | Bahlouli Fatna Romaisaa & Houbad Douaa | M1 EMB | Algeria  • {date_str}</p>', unsafe_allow_html=True)
+st.markdown(f'<p class="footer-text">NeuroScan v2.6 | Biomedical Engineering | Houbad Douaa & Bahlouli fatna romaissa | M1 EMB | Algeria  • {date_str}</p>', unsafe_allow_html=True)
